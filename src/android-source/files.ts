@@ -2247,7 +2247,7 @@ fun MoreScreen(repository: SandiRepository) {
                     color = GoldAccent
                 )
                 Text(
-                    text = "ব্যক্তিগত অটো ইজি বাইক প্রোফাইল ও সেটিংস",
+                    text = "ব্যক্তিগত অটো ইজি বাইক প্রোফাইল, ব্যাটারি ও সার্ভিস ট্র্যাকার",
                     style = MaterialTheme.typography.bodySmall,
                     color = MutedSlate
                 )
