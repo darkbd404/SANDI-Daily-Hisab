@@ -173,18 +173,6 @@ export default function App() {
     setMaintenanceRecords(SandiStorage.getMaintenanceRecords());
   };
 
-  // Handler: Clear all transactions to start 100% fresh
-  const handleClearAllTransactions = () => {
-    if (window.confirm('আপনি কি নিশ্চিত সকল ডেমো ও লেনদেনের হিসাব মুছে একদম ফ্রেশ (০ ব্যালেন্স) শুরু করতে চান?')) {
-      SandiStorage.clearAllTransactions();
-      setIncomes([]);
-      setExpenses([]);
-      setVouchers([]);
-      setBatteryRecords([]);
-      setMaintenanceRecords([]);
-    }
-  };
-
   // Active selected date for daily consolidated voucher
   const [selectedVoucherDate, setSelectedVoucherDate] = useState<string>(getTodayDate());
 
@@ -309,7 +297,6 @@ export default function App() {
             onOpenSecurity={() => setIsSecurityModalOpen(true)}
             onOpenAndroidHub={() => setIsAndroidHubModalOpen(true)}
             onUpdateSettings={handleUpdateSettings}
-            onClearTransactions={handleClearAllTransactions}
           />
         )}
 

@@ -67,13 +67,166 @@ export const getCurrentTime = (): string => {
 
 const today = getTodayDate();
 
-export const INITIAL_INCOMES: IncomeItem[] = [];
+export const INITIAL_INCOMES: IncomeItem[] = [
+  {
+    id: 'inc-001',
+    amountPoisha: 85000, // 850 BDT
+    date: today,
+    time: '08:30',
+    category: 'PASSENGER_FARE',
+    tripDescription: 'সকালের ট্রিপ: ফলকামুড়ী টু বরুড়া বাজার (লোকাল যাত্রী)',
+    startLocation: 'ফলকামুড়ী',
+    destination: 'বরুড়া বাজার',
+    distanceKm: 8.5,
+    paymentMethod: 'CASH',
+    notes: 'সকালে যাত্রী চাপ ভালো ছিল',
+    createdAt: Date.now() - 1000 * 60 * 240,
+  },
+  {
+    id: 'inc-002',
+    amountPoisha: 60000, // 600 BDT
+    date: today,
+    time: '11:15',
+    category: 'RESERVED_TRIP',
+    tripDescription: 'আমড়াতলী বাজার থেকে বরুড়া উপজেলা স্বাস্থ্য কমপ্লেক্স রোগী রিজার্ভ',
+    customerName: 'মাওলানা আব্দুল হক',
+    startLocation: 'আমড়াতলী বাজার',
+    destination: 'উপজেলা স্বাস্থ্য কমপ্লেক্স',
+    distanceKm: 12.0,
+    paymentMethod: 'BKASH',
+    notes: 'যাওয়ার ও আসার রিজার্ভ ভাড়া',
+    createdAt: Date.now() - 1000 * 60 * 180,
+  },
+  {
+    id: 'inc-003',
+    amountPoisha: 45000, // 450 BDT
+    date: today,
+    time: '14:20',
+    category: 'PASSENGER_FARE',
+    tripDescription: 'দুপুরের ট্রিপ: বরুড়া বাজার টু আমড়াতলী স্ট্যান্ড',
+    startLocation: 'বরুড়া বাজার',
+    destination: 'আমড়াতলী স্ট্যান্ড',
+    distanceKm: 7.0,
+    paymentMethod: 'CASH',
+    createdAt: Date.now() - 1000 * 60 * 60,
+  },
+  {
+    id: 'inc-004',
+    amountPoisha: 120000, // 1200 BDT
+    date: '2026-10-29',
+    time: '18:45',
+    category: 'SPECIAL_TRIP',
+    tripDescription: 'কুমিল্লা পদুয়ার বাজার বিশ্বরোড স্পেশাল ট্রিপ',
+    customerName: 'জনাব রফিকুল ইসলাম',
+    startLocation: 'বরুড়া',
+    destination: 'বিশ্বরোড',
+    distanceKm: 22.0,
+    paymentMethod: 'CASH',
+    notes: 'সন্ধ্যায় যাত্রী নিয়ে বিশ্বরোড পৌঁছানো',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24,
+  },
+  {
+    id: 'inc-005',
+    amountPoisha: 95000, // 950 BDT
+    date: '2026-10-28',
+    time: '19:30',
+    category: 'PASSENGER_FARE',
+    tripDescription: 'সারাদিনের সাধারণ ট্রিপ সমূহ',
+    startLocation: 'বরুড়া',
+    destination: 'ফলকামুড়ী ও আশপাশ',
+    paymentMethod: 'CASH',
+    createdAt: Date.now() - 1000 * 60 * 60 * 48,
+  },
+];
 
-export const INITIAL_EXPENSES: ExpenseItem[] = [];
+export const INITIAL_EXPENSES: ExpenseItem[] = [
+  {
+    id: 'exp-001',
+    amountPoisha: 14000, // 140 BDT
+    date: today,
+    time: '06:00',
+    category: 'BATTERY_CHARGING',
+    description: 'রাত্রিকালীন ফুল চার্জিং গ্যারেজ বিল',
+    vendorName: 'সৌরভ গ্যারেজ ও চার্জিং পয়েন্ট',
+    paymentMethod: 'CASH',
+    location: 'আমড়াতলী বাজার',
+    notes: '৮ ঘণ্টা ফুল নাইট চার্জ',
+    createdAt: Date.now() - 1000 * 60 * 360,
+  },
+  {
+    id: 'exp-002',
+    amountPoisha: 8000, // 80 BDT
+    date: today,
+    time: '13:00',
+    category: 'PERSONAL_EXPENSE',
+    description: 'দুপুরের নাস্তা ও চা-পানি খরচ',
+    vendorName: 'মালেক টি স্টল',
+    paymentMethod: 'CASH',
+    location: 'বরুড়া বাস স্ট্যান্ড',
+    createdAt: Date.now() - 1000 * 60 * 120,
+  },
+  {
+    id: 'exp-003',
+    amountPoisha: 35000, // 350 BDT
+    date: '2026-10-27',
+    time: '16:00',
+    category: 'TIRE_TUBE',
+    description: 'পেছনের বাম চাকার টিউব পাংচার মেরামত ও নতুন ভাল্ব',
+    vendorName: 'আল-মদিনা টায়ার সার্ভিস',
+    paymentMethod: 'CASH',
+    location: 'বরুড়া বাজার',
+    createdAt: Date.now() - 1000 * 60 * 60 * 72,
+  },
+];
 
-export const INITIAL_BATTERY_RECORDS: BatteryRecord[] = [];
+export const INITIAL_BATTERY_RECORDS: BatteryRecord[] = [
+  {
+    id: 'bat-001',
+    date: today,
+    time: '06:00',
+    chargingUnits: 6.5,
+    costPoisha: 14000,
+    chargingDurationHours: 7.5,
+    batteryHealthPercent: 92,
+    notes: 'ফুল চার্জ ভোল্টেজ ৬৮.৪V, প্রতিটি সেল পানির লেভেল নরমাল',
+    createdAt: Date.now() - 1000 * 60 * 360,
+  },
+  {
+    id: 'bat-002',
+    date: '2026-10-29',
+    time: '06:15',
+    chargingUnits: 6.8,
+    costPoisha: 14000,
+    chargingDurationHours: 8.0,
+    batteryHealthPercent: 92,
+    notes: 'চার্জ ভালো ধরে রাখছে, মাইলেজ প্রায় ৬০ কিমি প্রতি ফুল চার্জে',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24,
+  },
+  {
+    id: 'bat-003',
+    date: '2026-10-28',
+    time: '06:00',
+    chargingUnits: 7.0,
+    costPoisha: 14000,
+    chargingDurationHours: 8.0,
+    batteryHealthPercent: 93,
+    createdAt: Date.now() - 1000 * 60 * 60 * 48,
+  },
+];
 
-export const INITIAL_MAINTENANCE_RECORDS: MaintenanceRecord[] = [];
+export const INITIAL_MAINTENANCE_RECORDS: MaintenanceRecord[] = [
+  {
+    id: 'maint-001',
+    date: '2026-10-15',
+    workshopName: 'ভাই ভাই ইজি বাইক ওয়ার্কশপ',
+    partsReplaced: 'ফ্রন্ট ব্রেক শু, ডিফারেনশিয়াল গিয়ার ওয়েল পরিবর্তন',
+    serviceDescription: 'সামনের চাকার ব্রেক সার্ভিসিং এবং নতুন গিয়ার অয়েল দেওয়া হয়েছে',
+    costPoisha: 85000, // 850 BDT
+    nextServiceDueDate: '2026-12-15',
+    notes: 'মেকানিক মিলন মিয়া কাজটি করেছেন। বাইকের রান স্মুথ হয়েছে।',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 15,
+  },
+];
 
 // Helper to compute a single consolidated daily voucher for any given date
 export const buildDailyConsolidatedVoucher = (
@@ -106,7 +259,22 @@ export const buildDailyConsolidatedVoucher = (
   };
 };
 
-export const INITIAL_VOUCHERS: DailyVoucherItem[] = [];
+export const INITIAL_VOUCHERS: DailyVoucherItem[] = [
+  buildDailyConsolidatedVoucher(
+    today,
+    INITIAL_INCOMES,
+    INITIAL_EXPENSES,
+    INITIAL_OWNER_PROFILE,
+    INITIAL_VEHICLE_PROFILE
+  ),
+  buildDailyConsolidatedVoucher(
+    '2026-10-29',
+    INITIAL_INCOMES,
+    INITIAL_EXPENSES,
+    INITIAL_OWNER_PROFILE,
+    INITIAL_VEHICLE_PROFILE
+  ),
+];
 
 // LocalStorage Keys
 const STORAGE_KEYS = {
@@ -191,16 +359,9 @@ export class SandiStorage {
   static getIncomes(): IncomeItem[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.INCOMES);
-      if (!data) return [];
-      const parsed: IncomeItem[] = JSON.parse(data);
-      // Strip any residual demo mock items
-      const filtered = parsed.filter((i) => !i.id.startsWith('inc-00'));
-      if (filtered.length !== parsed.length) {
-        this.saveIncomes(filtered);
-      }
-      return filtered;
+      return data ? JSON.parse(data) : INITIAL_INCOMES;
     } catch {
-      return [];
+      return INITIAL_INCOMES;
     }
   }
 
@@ -211,16 +372,9 @@ export class SandiStorage {
   static getExpenses(): ExpenseItem[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.EXPENSES);
-      if (!data) return [];
-      const parsed: ExpenseItem[] = JSON.parse(data);
-      // Strip any residual demo mock items
-      const filtered = parsed.filter((e) => !e.id.startsWith('exp-00'));
-      if (filtered.length !== parsed.length) {
-        this.saveExpenses(filtered);
-      }
-      return filtered;
+      return data ? JSON.parse(data) : INITIAL_EXPENSES;
     } catch {
-      return [];
+      return INITIAL_EXPENSES;
     }
   }
 
@@ -231,15 +385,9 @@ export class SandiStorage {
   static getBatteryRecords(): BatteryRecord[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.BATTERY);
-      if (!data) return [];
-      const parsed: BatteryRecord[] = JSON.parse(data);
-      const filtered = parsed.filter((b) => !b.id.startsWith('bat-00'));
-      if (filtered.length !== parsed.length) {
-        this.saveBatteryRecords(filtered);
-      }
-      return filtered;
+      return data ? JSON.parse(data) : INITIAL_BATTERY_RECORDS;
     } catch {
-      return [];
+      return INITIAL_BATTERY_RECORDS;
     }
   }
 
@@ -250,15 +398,9 @@ export class SandiStorage {
   static getMaintenanceRecords(): MaintenanceRecord[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.MAINTENANCE);
-      if (!data) return [];
-      const parsed: MaintenanceRecord[] = JSON.parse(data);
-      const filtered = parsed.filter((m) => !m.id.startsWith('maint-00'));
-      if (filtered.length !== parsed.length) {
-        this.saveMaintenanceRecords(filtered);
-      }
-      return filtered;
+      return data ? JSON.parse(data) : INITIAL_MAINTENANCE_RECORDS;
     } catch {
-      return [];
+      return INITIAL_MAINTENANCE_RECORDS;
     }
   }
 
@@ -269,35 +411,14 @@ export class SandiStorage {
   static getVouchers(): DailyVoucherItem[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.VOUCHERS);
-      if (!data) return [];
-      const parsed: DailyVoucherItem[] = JSON.parse(data);
-      // Strip demo vouchers
-      const filtered = parsed.filter(
-        (v) =>
-          !v.incomes?.some((i) => i.id.startsWith('inc-00')) &&
-          !v.expenses?.some((e) => e.id.startsWith('exp-00')) &&
-          (v.incomes?.length > 0 || v.expenses?.length > 0)
-      );
-      if (filtered.length !== parsed.length) {
-        this.saveVouchers(filtered);
-      }
-      return filtered;
+      return data ? JSON.parse(data) : INITIAL_VOUCHERS;
     } catch {
-      return [];
+      return INITIAL_VOUCHERS;
     }
   }
 
   static saveVouchers(vouchers: DailyVoucherItem[]): void {
     localStorage.setItem(STORAGE_KEYS.VOUCHERS, JSON.stringify(vouchers));
-  }
-
-  // Clear all transaction data to start completely fresh
-  static clearAllTransactions(): void {
-    localStorage.removeItem(STORAGE_KEYS.INCOMES);
-    localStorage.removeItem(STORAGE_KEYS.EXPENSES);
-    localStorage.removeItem(STORAGE_KEYS.BATTERY);
-    localStorage.removeItem(STORAGE_KEYS.MAINTENANCE);
-    localStorage.removeItem(STORAGE_KEYS.VOUCHERS);
   }
 
   // Get or generate the single Daily Master Voucher for a date

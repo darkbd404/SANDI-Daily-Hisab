@@ -20,9 +20,6 @@ interface VoucherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVoucher(voucher: VoucherEntity)
-
-    @Query("DELETE FROM daily_vouchers")
-    suspend fun clearAllVouchers()
 }
 
 @Dao
@@ -32,9 +29,6 @@ interface BatteryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBatteryRecord(record: BatteryEntity)
-
-    @Query("DELETE FROM battery_records")
-    suspend fun clearAllBatteryRecords()
 }
 
 @Dao
@@ -44,9 +38,6 @@ interface MaintenanceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMaintenanceRecord(record: MaintenanceEntity)
-
-    @Query("DELETE FROM maintenance_records")
-    suspend fun clearAllMaintenanceRecords()
 }
 
 @Dao

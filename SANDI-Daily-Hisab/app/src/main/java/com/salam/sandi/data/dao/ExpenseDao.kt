@@ -20,7 +20,4 @@ interface ExpenseDao {
 
     @Delete
     suspend fun deleteExpense(expense: ExpenseEntity)
-
-    @Query("DELETE FROM expenses")
-    suspend fun clearAllExpenses()
 }

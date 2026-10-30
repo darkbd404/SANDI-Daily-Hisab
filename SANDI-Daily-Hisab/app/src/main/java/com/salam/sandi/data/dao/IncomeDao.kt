@@ -20,7 +20,4 @@ interface IncomeDao {
 
     @Delete
     suspend fun deleteIncome(income: IncomeEntity)
-
-    @Query("DELETE FROM incomes")
-    suspend fun clearAllIncomes()
 }
