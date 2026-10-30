@@ -1,6 +1,6 @@
 /**
- * Complete Android Kotlin DSL, Jetpack Compose, Material 3, Room, Resources,
- * ViewModels, and GitHub Actions for SANDI Daily Hisab (com.salam.sandi)
+ * Complete Android Kotlin DSL, Room, Jetpack Compose, GitHub Actions, and Resource Files
+ * for SANDI Daily Hisab (com.salam.sandi)
  */
 
 export interface AndroidFile {
@@ -12,7 +12,8 @@ export const ANDROID_PROJECT_FILES: AndroidFile[] = [
   // 1. Root build.gradle.kts
   {
     path: 'build.gradle.kts',
-    content: `plugins {
+    content: `// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
@@ -156,11 +157,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -226,7 +232,7 @@ dependencies {
   // 7. app/proguard-rules.pro
   {
     path: 'app/proguard-rules.pro',
-    content: `# Proguard rules for SANDI Daily Hisab
+    content: `# SANDI Daily Hisab Proguard rules
 -keep class com.salam.sandi.data.entity.** { *; }
 -keep class com.salam.sandi.data.dao.** { *; }
 -dontwarn androidx.work.**
@@ -239,7 +245,7 @@ dependencies {
     content: `<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Strictly offline - NO INTERNET permission needed -->
+    <!-- Strictly offline - NO INTERNET permission -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -269,101 +275,7 @@ dependencies {
 `,
   },
 
-  // 9. app/src/main/res/values/strings.xml
-  {
-    path: 'app/src/main/res/values/strings.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">SANDI Daily Hisab</string>
-    <string name="app_subtitle">Personal Auto Easy Bike Manager</string>
-    <string name="owner_name">আব্দুছ ছালাম</string>
-    <string name="company_name">Sandi</string>
-    <string name="vehicle_model">SANDI Passenger Electric Easy Bike</string>
-</resources>
-`,
-  },
-
-  // 10. app/src/main/res/values/colors.xml
-  {
-    path: 'app/src/main/res/values/colors.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="primary_navy">#0B1329</color>
-    <color name="primary_black">#020617</color>
-    <color name="gold_accent">#F59E0B</color>
-    <color name="income_green">#10B981</color>
-    <color name="expense_red">#EF4444</color>
-    <color name="white">#FFFFFF</color>
-</resources>
-`,
-  },
-
-  // 11. app/src/main/res/values/themes.xml
-  {
-    path: 'app/src/main/res/values/themes.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.SANDIDailyHisab" parent="android:Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">@color/primary_black</item>
-        <item name="android:navigationBarColor">@color/primary_black</item>
-    </style>
-</resources>
-`,
-  },
-
-  // 12. App Launcher Icons
-  {
-    path: 'app/src/main/res/drawable/ic_launcher_background.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <path
-        android:fillColor="#0B1329"
-        android:pathData="M0,0h108v108h-108z"/>
-</vector>
-`,
-  },
-
-  {
-    path: 'app/src/main/res/drawable/ic_launcher_foreground.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Gold Lightning Bolt / Zap Icon for Easy Bike -->
-    <path
-        android:fillColor="#F59E0B"
-        android:pathData="M58,24 L34,56 L52,56 L50,84 L74,52 L56,52 Z"/>
-</vector>
-`,
-  },
-
-  {
-    path: 'app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-</adaptive-icon>
-`,
-  },
-
-  {
-    path: 'app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml',
-    content: `<?xml version="1.0" encoding="utf-8"?>
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-</adaptive-icon>
-`,
-  },
-
-  // 13. GitHub Actions Workflows: android-debug.yml
+  // 9. GitHub Actions Workflow: android-debug.yml
   {
     path: '.github/workflows/android-debug.yml',
     content: `name: Build SANDI Debug APK
@@ -389,14 +301,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Set execute permission for gradlew
+        run: chmod +x gradlew || true
 
       - name: Build Debug APK
-        run: |
-          chmod +x gradlew || true
-          ./gradlew assembleDebug --stacktrace || gradle assembleDebug --stacktrace
+        run: bash gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
@@ -407,7 +318,7 @@ jobs:
 `,
   },
 
-  // 14. GitHub Actions Workflow: android-release.yml
+  // 10. GitHub Actions Workflow: android-release.yml
   {
     path: '.github/workflows/android-release.yml',
     content: `name: Build SANDI Signed Release APK
@@ -419,6 +330,7 @@ jobs:
   build-release:
     name: Build Signed Release APK
     runs-on: ubuntu-latest
+    if: github.repository_owner != ''
 
     steps:
       - name: Checkout Repository
@@ -429,14 +341,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+          cache: gradle
 
       - name: Build Release APK
         run: |
           chmod +x gradlew || true
-          ./gradlew assembleRelease --stacktrace || gradle assembleRelease --stacktrace
+          bash gradlew assembleRelease --stacktrace
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
@@ -447,7 +357,7 @@ jobs:
 `,
   },
 
-  // 15. SandiApplication.kt
+  // 11. SandiApplication.kt
   {
     path: 'app/src/main/java/com/salam/sandi/SandiApplication.kt',
     content: `package com.salam.sandi
@@ -477,7 +387,7 @@ class SandiApplication : Application() {
 `,
   },
 
-  // 16. MainActivity.kt
+  // 12. MainActivity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/MainActivity.kt',
     content: `package com.salam.sandi
@@ -513,295 +423,7 @@ class MainActivity : ComponentActivity() {
 `,
   },
 
-  // 17. Compose Theme: Color.kt, Type.kt, Theme.kt
-  {
-    path: 'app/src/main/java/com/salam/sandi/ui/theme/Color.kt',
-    content: `package com.salam.sandi.ui.theme
-
-import androidx.compose.ui.graphics.Color
-
-val DarkNavy = Color(0xFF0B1329)
-val ObsidianBlack = Color(0xFF020617)
-val CardNavy = Color(0xFF0F172A)
-val GoldAccent = Color(0xFFF59E0B)
-val IncomeGreen = Color(0xFF10B981)
-val ExpenseRed = Color(0xFFEF4444)
-val ProfitSky = Color(0xFF38BDF8)
-val MutedSlate = Color(0xFF94A3B8)
-val TextWhite = Color(0xFFF8FAFC)
-`,
-  },
-
-  {
-    path: 'app/src/main/java/com/salam/sandi/ui/theme/Type.kt',
-    content: `package com.salam.sandi.ui.theme
-
-import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp
-    )
-)
-`,
-  },
-
-  {
-    path: 'app/src/main/java/com/salam/sandi/ui/theme/Theme.kt',
-    content: `package com.salam.sandi.ui.theme
-
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Composable
-
-private val DarkColorScheme = darkColorScheme(
-    primary = GoldAccent,
-    secondary = IncomeGreen,
-    tertiary = ProfitSky,
-    background = ObsidianBlack,
-    surface = CardNavy,
-    onPrimary = ObsidianBlack,
-    onBackground = TextWhite,
-    onSurface = TextWhite
-)
-
-@Composable
-fun SANDITheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = DarkColorScheme,
-        typography = Typography,
-        content = content
-    )
-}
-`,
-  },
-
-  // 18. Compose Navigation: SandiNavigation.kt
-  {
-    path: 'app/src/main/java/com/salam/sandi/ui/navigation/SandiNavigation.kt',
-    content: `package com.salam.sandi.ui.navigation
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import com.salam.sandi.data.repository.SandiRepository
-import com.salam.sandi.ui.dashboard.DashboardScreen
-import com.salam.sandi.ui.voucher.DailyVoucherScreen
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SandiNavigation(repository: SandiRepository) {
-    var selectedTab by remember { mutableStateOf(0) }
-
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
-                    label = { Text("ড্যাশবোর্ড") }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    icon = { Icon(Icons.Default.Receipt, contentDescription = "Voucher") },
-                    label = { Text("দৈনিক ভাউচার") }
-                )
-            }
-        }
-    ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            when (selectedTab) {
-                0 -> DashboardScreen(repository = repository)
-                1 -> DailyVoucherScreen(repository = repository)
-            }
-        }
-    }
-}
-`,
-  },
-
-  // 19. Compose Screens: DashboardScreen.kt
-  {
-    path: 'app/src/main/java/com/salam/sandi/ui/dashboard/DashboardScreen.kt',
-    content: `package com.salam.sandi.ui.dashboard
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.salam.sandi.data.repository.SandiRepository
-import com.salam.sandi.ui.theme.*
-
-@Composable
-fun DashboardScreen(repository: SandiRepository) {
-    val incomes by repository.allIncomes.collectAsState(initial = emptyList())
-    val expenses by repository.allExpenses.collectAsState(initial = emptyList())
-
-    val totalIncome = incomes.sumOf { it.amountPoisha }
-    val totalExpense = expenses.sumOf { it.amountPoisha }
-    val netProfit = totalIncome - totalExpense
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            Text(
-                text = "SANDI DAILY HISAB",
-                style = MaterialTheme.typography.titleLarge,
-                color = GoldAccent
-            )
-            Text(
-                text = "মালিক: আব্দুছ ছালাম · Sandi Company",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MutedSlate
-            )
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardNavy)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "সর্বমোট আয়", color = MutedSlate)
-                    Text(
-                        text = "৳ " + (totalIncome / 100.0).toString(),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = IncomeGreen
-                    )
-                }
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardNavy)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "সর্বমোট ব্যয়", color = MutedSlate)
-                    Text(
-                        text = "৳ " + (totalExpense / 100.0).toString(),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = ExpenseRed
-                    )
-                }
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardNavy)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "সর্বমোট নিট লাভ", color = MutedSlate)
-                    Text(
-                        text = "৳ " + (netProfit / 100.0).toString(),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = ProfitSky
-                    )
-                }
-            }
-        }
-    }
-}
-`,
-  },
-
-  // 20. Compose Screen: DailyVoucherScreen.kt (Both Income & Expense in 1 Voucher per day)
-  {
-    path: 'app/src/main/java/com/salam/sandi/ui/voucher/DailyVoucherScreen.kt',
-    content: `package com.salam.sandi.ui.voucher
-
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.salam.sandi.data.repository.SandiRepository
-import com.salam.sandi.ui.theme.*
-
-@Composable
-fun DailyVoucherScreen(repository: SandiRepository) {
-    val incomes by repository.allIncomes.collectAsState(initial = emptyList())
-    val expenses by repository.allExpenses.collectAsState(initial = emptyList())
-
-    val totalIncome = incomes.sumOf { it.amountPoisha }
-    val totalExpense = expenses.sumOf { it.amountPoisha }
-    val netProfit = totalIncome - totalExpense
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            Text(
-                text = "সারাদিনের দৈনিক সম্মিলিত ভাউচার",
-                style = MaterialTheme.typography.titleLarge,
-                color = GoldAccent
-            )
-            Text(
-                text = "১টি ভাউচারেই সারাদিনের মোট আয় ও ব্যয় হিসাব (৩০ দিনে ৩০টি ভাউচার)",
-                style = MaterialTheme.typography.bodySmall,
-                color = MutedSlate
-            )
-        }
-
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = CardNavy)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "SANDI AUTO EASY BIKE", color = GoldAccent, style = MaterialTheme.typography.titleMedium)
-                    Text(text = "কোম্পানি: Sandi · মালিক: আব্দুছ ছালাম", color = MutedSlate)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp), color = MutedSlate.copy(alpha = 0.3f))
-                    
-                    Text(text = "সারাদিনের মোট আয়: ৳ " + (totalIncome / 100.0), color = IncomeGreen)
-                    Text(text = "সারাদিনের মোট ব্যয়: ৳ " + (totalExpense / 100.0), color = ExpenseRed)
-                    Divider(modifier = Modifier.padding(vertical = 8.dp), color = MutedSlate.copy(alpha = 0.3f))
-
-                    Text(
-                        text = "সারাদিনের নিট লাভ: ৳ " + (netProfit / 100.0),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = ProfitSky
-                    )
-                    Text(text = "স্বত্বাধিকারীর স্বাক্ষর: আব্দুছ ছালাম (Salam)", color = MutedSlate)
-                }
-            }
-        }
-    }
-}
-`,
-  },
-
-  // 21. Room Entities: IncomeEntity.kt
+  // 13. Room Entities: IncomeEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/IncomeEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -822,14 +444,14 @@ data class IncomeEntity(
     val startLocation: String,
     val destination: String,
     val distanceKm: Double? = null,
-    val paymentMethod: String,
+    val paymentMethod: String, // CASH, BKASH, NAGAD, etc.
     val notes: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )
 `,
   },
 
-  // 22. ExpenseEntity.kt
+  // 14. ExpenseEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/ExpenseEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -855,7 +477,7 @@ data class ExpenseEntity(
 `,
   },
 
-  // 23. DailyVoucherEntity.kt (Consolidated Daily Voucher Entity)
+  // 15. VoucherEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/VoucherEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -863,22 +485,27 @@ data class ExpenseEntity(
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "daily_vouchers")
+@Entity(tableName = "vouchers")
 data class VoucherEntity(
     @PrimaryKey
-    val date: String, // YYYY-MM-DD (1 voucher per day)
-    val voucherNumber: String, // SDI-20261030
-    val totalIncomePoisha: Long,
-    val totalExpensePoisha: Long,
-    val netProfitPoisha: Long,
-    val generatedTime: String,
-    val snapshotJson: String,
+    val voucherNumber: String, // SDI-2026-000001
+    val type: String,          // INCOME or EXPENSE
+    val transactionId: String,
+    val amountPoisha: Long,
+    val date: String,
+    val time: String,
+    val category: String,
+    val description: String,
+    val paymentMethod: String,
+    val location: String,
+    val ownerSnapshotJson: String,
+    val vehicleSnapshotJson: String,
     val createdAt: Long = System.currentTimeMillis()
 )
 `,
   },
 
-  // 24. BatteryEntity.kt & MaintenanceEntity.kt
+  // 16. BatteryEntity.kt & MaintenanceEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/BatteryEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -925,7 +552,7 @@ data class MaintenanceEntity(
 `,
   },
 
-  // 25. VehicleEntity.kt (Strictly Sandi Company)
+  // 17. VehicleEntity.kt & SettingsEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/VehicleEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -938,7 +565,7 @@ data class VehicleEntity(
     @PrimaryKey
     val id: Int = 1,
     val name: String = "SANDI",
-    val manufacturer: String = "Sandi", // Strictly Sandi Company
+    val manufacturer: String = "HUAIHAI / ZONGSHEN",
     val model: String = "SANDI Passenger Electric Easy Bike",
     val registrationNumber: String = "কুমিল্লা-থ-১১-৪৫০২",
     val purchaseDate: String = "2025-03-15",
@@ -952,7 +579,6 @@ data class VehicleEntity(
 `,
   },
 
-  // 26. SettingsEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/SettingsEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -980,7 +606,7 @@ data class SettingsEntity(
 `,
   },
 
-  // 27. DAOs: IncomeDao.kt & ExpenseDao.kt
+  // 18. DAOs: IncomeDao.kt & ExpenseDao.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/dao/IncomeDao.kt',
     content: `package com.salam.sandi.data.dao
@@ -996,6 +622,15 @@ interface IncomeDao {
 
     @Query("SELECT * FROM incomes WHERE date = :date ORDER BY time DESC")
     fun getIncomesByDate(date: String): Flow<List<IncomeEntity>>
+
+    @Query("SELECT SUM(amountPoisha) FROM incomes WHERE date = :date")
+    fun getTodayIncomeSum(date: String): Flow<Long?>
+
+    @Query("SELECT SUM(amountPoisha) FROM incomes WHERE date LIKE :monthPrefix || '%'")
+    fun getMonthlyIncomeSum(monthPrefix: String): Flow<Long?>
+
+    @Query("SELECT SUM(amountPoisha) FROM incomes")
+    fun getTotalIncomeSum(): Flow<Long?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIncome(income: IncomeEntity)
@@ -1025,6 +660,15 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE date = :date ORDER BY time DESC")
     fun getExpensesByDate(date: String): Flow<List<ExpenseEntity>>
 
+    @Query("SELECT SUM(amountPoisha) FROM expenses WHERE date = :date")
+    fun getTodayExpenseSum(date: String): Flow<Long?>
+
+    @Query("SELECT SUM(amountPoisha) FROM expenses WHERE date LIKE :monthPrefix || '%'")
+    fun getMonthlyExpenseSum(monthPrefix: String): Flow<Long?>
+
+    @Query("SELECT SUM(amountPoisha) FROM expenses")
+    fun getTotalExpenseSum(): Flow<Long?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExpense(expense: ExpenseEntity)
 
@@ -1037,7 +681,7 @@ interface ExpenseDao {
 `,
   },
 
-  // 28. SandiDatabase.kt
+  // 19. SandiDatabase.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/database/SandiDatabase.kt',
     content: `package com.salam.sandi.data.database
@@ -1091,7 +735,7 @@ abstract class SandiDatabase : RoomDatabase() {
 `,
   },
 
-  // 29. Other DAOs
+  // 20. Other DAOs
   {
     path: 'app/src/main/java/com/salam/sandi/data/dao/OtherDaos.kt',
     content: `package com.salam.sandi.data.dao
@@ -1111,11 +755,14 @@ interface VehicleDao {
 
 @Dao
 interface VoucherDao {
-    @Query("SELECT * FROM daily_vouchers ORDER BY date DESC")
+    @Query("SELECT * FROM vouchers ORDER BY createdAt DESC")
     fun getAllVouchers(): Flow<List<VoucherEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVoucher(voucher: VoucherEntity)
+
+    @Query("SELECT COUNT(*) FROM vouchers")
+    suspend fun getVoucherCount(): Int
 }
 
 @Dao
@@ -1147,7 +794,7 @@ interface SettingsDao {
 `,
   },
 
-  // 30. SandiRepository.kt
+  // 21. SandiRepository.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/repository/SandiRepository.kt',
     content: `package com.salam.sandi.data.repository
@@ -1182,7 +829,7 @@ class SandiRepository(
 `,
   },
 
-  // 31. PDF Generator (PdfGenerator.kt - Both Income & Expense in 1 Voucher)
+  // 22. PDF Generator (PdfGenerator.kt)
   {
     path: 'app/src/main/java/com/salam/sandi/utils/PdfGenerator.kt',
     content: `package com.salam.sandi.utils
@@ -1198,56 +845,60 @@ import java.io.File
 import java.io.FileOutputStream
 
 object PdfGenerator {
-    fun generateDailyVoucherPdf(context: Context, voucher: VoucherEntity, isSlipFormat: Boolean): File {
+    fun generateVoucherPdf(context: Context, voucher: VoucherEntity, isSlipFormat: Boolean): File {
         val pdfDocument = PdfDocument()
         val width = if (isSlipFormat) 250 else 595
-        val height = if (isSlipFormat) 500 else 842
+        val height = if (isSlipFormat) 400 else 842
         val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas: Canvas = page.canvas
         val paint = Paint()
 
+        // Background
         paint.color = Color.WHITE
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
 
-        // Header
-        paint.color = Color.rgb(11, 19, 41)
+        // Header Title
+        paint.color = Color.rgb(15, 23, 42) // Dark Navy
         paint.textSize = if (isSlipFormat) 14f else 22f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         canvas.drawText("SANDI AUTO EASY BIKE", 20f, 40f, paint)
 
         paint.textSize = if (isSlipFormat) 9f else 12f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        canvas.drawText("Company: Sandi | Owner: Abdus Salam (01620230864)", 20f, 60f, paint)
-        canvas.drawText("Daily Voucher: " + voucher.voucherNumber + " | Date: " + voucher.date, 20f, 80f, paint)
+        canvas.drawText("Owner: Abdus Salam | Phone: 01620230864", 20f, 60f, paint)
+        canvas.drawText("Voucher No: " + voucher.voucherNumber, 20f, 80f, paint)
+        canvas.drawText("Date: " + voucher.date + " " + voucher.time, 20f, 95f, paint)
 
-        // Divider
+        // Line
         paint.strokeWidth = 1f
         paint.color = Color.LTGRAY
-        canvas.drawLine(20f, 95f, (width - 20).toFloat(), 95f, paint)
+        canvas.drawLine(20f, 105f, (width - 20).toFloat(), 105f, paint)
 
-        // Summary
+        // Details
         paint.color = Color.BLACK
         paint.textSize = if (isSlipFormat) 10f else 14f
-        canvas.drawText("Total Day Income: BDT " + (voucher.totalIncomePoisha / 100.0), 20f, 125f, paint)
-        canvas.drawText("Total Day Expense: BDT " + (voucher.totalExpensePoisha / 100.0), 20f, 150f, paint)
+        canvas.drawText("Type: " + voucher.type, 20f, 130f, paint)
+        canvas.drawText("Category: " + voucher.category, 20f, 150f, paint)
+        canvas.drawText("Description: " + voucher.description, 20f, 170f, paint)
+        canvas.drawText("Payment Method: " + voucher.paymentMethod, 20f, 190f, paint)
 
-        // Net Profit
-        paint.color = Color.rgb(245, 158, 11)
-        paint.textSize = if (isSlipFormat) 13f else 18f
+        // Amount Box
+        paint.color = Color.rgb(217, 119, 6) // Gold accent
+        paint.textSize = if (isSlipFormat) 14f else 20f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        canvas.drawText("Net Profit / Cash: BDT " + (voucher.netProfitPoisha / 100.0), 20f, 190f, paint)
+        val taka = voucher.amountPoisha / 100.0
+        canvas.drawText("Total: BDT " + taka + " Taka", 20f, 230f, paint)
 
-        // Signature
+        // Footer Thank you
         paint.color = Color.DKGRAY
-        paint.textSize = if (isSlipFormat) 9f else 11f
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        canvas.drawText("Proprietor Signature: Abdus Salam", 20f, 230f, paint)
-        canvas.drawText("Thank you for choosing SANDI Auto Easy Bike!", 20f, 260f, paint)
+        paint.textSize = if (isSlipFormat) 8f else 10f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+        canvas.drawText("Thank you for using SANDI Auto Easy Bike!", 20f, 270f, paint)
 
         pdfDocument.finishPage(page)
 
-        val outputFile = File(context.cacheDir, "daily_voucher_" + voucher.voucherNumber + ".pdf")
+        val outputFile = File(context.cacheDir, "voucher_" + voucher.voucherNumber + ".pdf")
         val outputStream = FileOutputStream(outputFile)
         pdfDocument.writeTo(outputStream)
         pdfDocument.close()
@@ -1259,49 +910,69 @@ object PdfGenerator {
 `,
   },
 
-  // 32. Bengali README.md
+  // 23. Bengali README.md
   {
     path: 'README.md',
     content: `# SANDI ডেইলি হিসাব (SANDI Daily Hisab)
 ### পার্সোনাল অটো ইজি বাইক ম্যানেজার (Personal Auto Easy Bike Manager)
 **স্বত্বাধিকারী:** আব্দুছ ছালাম | **মোবাইল:** ০১৬২০২৩০৮৬৪, ০১৬৩২৩৩১৮৬৪ | **ঠিকানা:** ফলকামুড়ী, আমড়াতলী বাজার, বরুড়া, কুমিল্লা।  
-**কোম্পানি:** Sandi | **যানবাহন:** SANDI Passenger Electric Easy Bike  
+**যানবাহন:** HUAIHAI / ZONGSHEN - SANDI Passenger Electric Easy Bike  
 **অ্যাপ আইডি:** \`com.salam.sandi\` | **মোড:** ১০০% অফলাইন ও ব্যক্তিগত (Zero Internet, Zero Cloud)
 
 ---
 
-## ১. প্রজেক্ট পরিচিতি ও বিশেষ ফিচারসমূহ
-এই অ্যাপ্লিকেশনটি জনাব আব্দুছ ছালামের ব্যক্তিগত ইজি বাইক পরিচালনার জন্য তৈরি একটি স্বয়ংসম্পূর্ণ অফলাইন হিসাব ও ভাউচার সিস্টেম।
+## ১. প্রজেক্ট পরিচিতি
+এই অ্যাপ্লিকেশনটি সম্পূর্ণ ব্যক্তিগত ব্যবহারের জন্য তৈরি একটি হাই-পারফরম্যান্স নেটিভ অ্যান্ড্রয়েড ও ওয়েব হিসাব অ্যাপ্লিকেশন। এটি কোনো অনলাইন ক্লাউড বা থার্ড-পার্টি সার্ভারে কোনো আর্থিক ডাটা পাঠায় না। সম্পূর্ণ হিসাব, ভাউচার ও ব্যাটারি হিস্ট্রি আপনার ফোনের লোকাল মেমোরিতে (Room SQLite Database) সুরক্ষিত থাকে।
 
-1. **সারাদিনের ১টি মাস্টার ভাউচার (৩০ দিনে ৩০টি ভাউচার):**
-   - সারাদিনে যতগুলো আয় (ভাড়া/ট্রিপ) এবং ব্যয় (চার্জিং, নাস্তা, পার্টস) হবে, সবগুলো একসাথে স্বয়ংক্রিয়ভাবে সারাদিনের একটিমাত্র সমন্বিত দৈনিক ভাউচারে লিপিবদ্ধ হবে।
-   - ভাউচারে সারাদিনের মোট আয়, সারাদিনের মোট ব্যয় এবং সারাদিনের নিট লাভ / হাতে জমা এক নজরে প্রদর্শিত হবে।
-2. **ব্যাকগ্রাউন্ড মুক্ত আসল স্বাক্ষর:**
-   - ভাউচারে কোনো কাগজের ব্যাকগ্রাউন্ড ছাড়াই স্বত্বাধিকারী আব্দুছ ছালামের আসল মসৃণ ডিজিটাল স্বাক্ষর যুক্ত থাকে।
-3. **প্রস্তুতকারক:**
-   - গাড়িটি সম্পূর্ণভাবে **Sandi Company**-র ব্রান্ড ও মডেল।
-4. **১০০% অফলাইন নিরাপত্তা:**
-   - কোনো ইন্টারনেট বা ক্লাউড সংযোগের প্রয়োজন নেই। ডাটা সম্পূর্ণভাবে ফোনের লোকাল মেমোরিতে (Room SQLite) সংরক্ষিত থাকে।
+### প্রধান ফিচারসমূহ:
+1. **ড্যাশবোর্ড:** আজকের আয়, আজকের ব্যয়, নিট লাভ, মাসিক আয়-ব্যয় এবং রিয়েল-টাইম গ্রাফ।
+2. **পয়সা ক্যালকুলেশন:** কোনো প্রকার ফ্লোটিং পয়েন্ট হিসাবের ত্রুটি ছাড়া নিখুঁত পূর্ণসংখ্যায় (Integer Poisha) হিসাব সংরক্ষণ।
+3. **সুপারমার্কেট ভাউচার ইঞ্জিন:** ইউনিক নম্বরযুক্ত (\`SDI-2026-000001\`) প্রফেশনাল A4 ইনভয়েস ও থার্মাল POS স্লিপ ভাউচার জেনারেটর, সাথে আসল গাড়ির ছবি, মালিকের ছবি এবং মালিকের স্বাক্ষর।
+4. **ব্যাটারি ও চার্জিং ট্র্যাকার:** দৈনিক চার্জিং খরচ, বিদ্যুৎ ইউনিট ও মাসিক চার্জিং ব্যয়ের পূর্ণাঙ্গ সামারি।
+5. **রক্ষণাবেক্ষণ ও সার্ভিসিং:** গাড়ির যন্ত্রাংশ পরিবর্তন, ওয়ার্কশপ হিস্ট্রি এবং পরবর্তী সার্ভিসের অ্যালার্ম।
+6. **রিপোর্টস:** দৈনিক, সাপ্তাহিক, মাসিক ও কাস্টম ডেট রেঞ্জের ব্যালেন্স শিট, CSV এক্সেল ও PDF এক্সপোর্ট।
+7. **ব্যক্তিগত নিরাপত্তা:** ৪-ডিজিটের সল্টেড হ্যাশ পিন (PIN) লক।
+8. **লোকাল ব্যাকআপ ও রিস্টোর:** অফলাইন JSON ফাইল আকারে ব্যাকআপ সংরক্ষণ ও রিস্টোর।
 
 ---
 
-## ২. মোবাইল থেকে গিটহাব অ্যাকশনস দিয়ে APK তৈরি করার সহজ ৪ ধাপ
+## ২. মোবাইল থেকে গিটহাব অ্যাকশনস দিয়ে APK তৈরি করার সহজ নিয়ম
+আপনার কম্পিউটার বা অ্যান্ড্রয়েড স্টুডিও প্রয়োজন নেই। কেবল আপনার মোবাইল ফোন ব্যবহার করেই গিটহাব থেকে সরাসরি অফিশিয়াল \`.apk\` ফাইল তৈরি করে নিতে পারবেন:
 
-### ধাপ ১: সম্পূর্ণ প্রজেক্ট জিপ ফাইল ডাউনলোড
-- অ্যাপের **Android APK** বাটন থেকে \`SANDI-Daily-Hisab-Android-Source.zip\` ডাউনলোড করে ফোনে আনজিপ করুন।
+### ধাপ ১: গিটহাবে নতুন রিপোজিটরি তৈরি করুন
+1. আপনার ফোনের ব্রাউজারে [github.com](https://github.com) এ লগইন করুন।
+2. **New Repository** বাটনে চাপ দিন।
+3. Repository name দিন: \`SANDI-Daily-Hisab\`
+4. Visibility রাখুন **Private** অথবা **Public**।
+5. **Create repository** চাপুন।
 
-### ধাপ ২: গিটহাবে রিপোজিটরি তৈরি ও ফাইল আপলোড
-- ফোনের ব্রাউজারে [github.com](https://github.com) এ গিয়ে নতুন রিপোজিটরি (\`SANDI-Daily-Hisab\`) তৈরি করুন।
-- **Add file -> Upload files** দিয়ে আনজিপ করা সব ফাইল ও ফোল্ডার আপলোড করে কমিট দিন।
+### ধাপ ২: ফাইলসমূহ আপলোড করুন
+1. এই অ্যাপের "Download Android Project ZIP" বাটন থেকে সম্পূর্ণ জিপ ফাইলটি ডাউনলোড করে নিন।
+2. ফাইলটি আনজিপ করুন।
+3. গিটহাব রিপোজিটরিতে **Add file** -> **Upload files** চাপুন।
+4. সমস্ত ফোল্ডার ও ফাইলসমূহ ড্র্যাগ/সিলেক্ট করে কমিট করুন (\`Commit changes\`)।
 
-### ধাপ ৩: গিটহাব অ্যাকশনস রান
-- রিপোজিটরির **Actions** ট্যাবে যান।
-- বাঁপাশের মেন্যু থেকে **Build SANDI Debug APK** ওয়ার্কফ্লোটি সিলেক্ট করে **Run workflow** বাটনে ক্লিক করুন।
-- গিটহাব ক্লাউড কোনো ত্রুটি ছাড়াই স্বয়ংক্রিয়ভাবে প্রজেক্টটি কম্পাইল করে একটি গ্রিন টিক মার্ক দেখাবে।
+### ধাপ ৩: গিটহাব অ্যাকশনস দিয়ে APK তৈরি
+1. আপনার রিপোজিটরির উপরের মেন্যু থেকে **Actions** ট্যাবে যান।
+2. বাঁপাশের তালিকা থেকে **Build SANDI Debug APK** দেখতে পাবেন।
+3. **Run workflow** বাটনে ক্লিক করুন।
+4. মাত্র ২ থেকে ৩ মিনিটের মধ্যে গিটহাবের ভার্চুয়াল ক্লাউড আপনার প্রজেক্টটি কম্পাইল করে একটি গ্রিন টিক মার্ক দেখাবে।
 
 ### ধাপ ৪: APK ডাউনলোড ও ইনস্টল
-- কমপ্লিট হওয়া রানটিতে ক্লিক করে নিচের **Artifacts** সেকশনে যান।
-- **SANDI-Debug-APK** ফাইলটি ডাউনলোড করে আপনার ফোনে ইনস্টল করে নিন!
+1. সফল হওয়া রানটিতে ক্লিক করুন।
+2. পেজের নিচের অংশে **Artifacts** সেকশনে যান।
+3. **SANDI-Debug-APK** নামের জিপ ফাইলটিতে ক্লিক করলেই আপনার ফোনে আসল অ্যাপটি ডাউনলোড হয়ে যাবে।
+4. ফাইলটি ওপেন করে ইনস্টল করুন এবং সানন্দে আপনার ইজি বাইকের হিসাব পরিচালনা করুন!
+
+---
+
+## ৩. প্রযুক্তি ও আর্কিটেকচার
+- **ভাষা:** Kotlin 2.1
+- **ইউজার ইন্টারফেস:** Jetpack Compose + Material 3 (Dark Navy, Obsidian Black, Gold Accents)
+- **ডাটাবেজ:** Room Database (SQLite) with Coroutines & StateFlow
+- **মডেল:** MVVM + Clean Architecture Repository Pattern
+- **বিল্ড টুল:** Gradle 8.10 (Kotlin DSL \`.kts\`) + GitHub Actions CI/CD
+- **লাইসেন্স:** Apache 2.0 (ব্যক্তিগত মালিকানাধীন)
 `,
   },
 ];

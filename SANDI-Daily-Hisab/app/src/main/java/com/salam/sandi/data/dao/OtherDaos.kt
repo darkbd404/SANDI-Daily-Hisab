@@ -15,11 +15,14 @@ interface VehicleDao {
 
 @Dao
 interface VoucherDao {
-    @Query("SELECT * FROM daily_vouchers ORDER BY date DESC")
+    @Query("SELECT * FROM vouchers ORDER BY createdAt DESC")
     fun getAllVouchers(): Flow<List<VoucherEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVoucher(voucher: VoucherEntity)
+
+    @Query("SELECT COUNT(*) FROM vouchers")
+    suspend fun getVoucherCount(): Int
 }
 
 @Dao

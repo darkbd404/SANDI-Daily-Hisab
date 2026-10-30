@@ -10,33 +10,22 @@ export const generateAndDownloadAndroidZip = async (): Promise<boolean> => {
       zip.file(file.path, file.content);
     });
 
-    // 2. Add gradlew shell script (portable for Linux/Mac/GitHub Actions)
+    // 2. Add gradlew shell script
     const gradlewScript = `#!/bin/sh
-# Gradle start up script
-if command -v gradle >/dev/null 2>&1; then
-    exec gradle "$@"
-fi
+# Gradle start up script for POSIX systems
 APP_HOME=$(cd "$(dirname "$0")" && pwd)
-if [ -f "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" ]; then
-    exec java -jar "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" "$@"
-fi
-echo "Gradle not found locally. Please ensure gradle is installed or run with gradle command."
-exit 1
+exec "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" "$@" 2>/dev/null || gradle "$@"
 `;
     zip.file('gradlew', gradlewScript);
 
     const gradlewBat = `@rem Gradle start up script for Windows
 @echo off
 set DIRNAME=%~dp0
-if exist "%DIRNAME%gradle\\wrapper\\gradle-wrapper.jar" (
-    java -jar "%DIRNAME%gradle\\wrapper\\gradle-wrapper.jar" %*
-) else (
-    gradle %*
-)
+gradle %*
 `;
     zip.file('gradlew.bat', gradlewBat);
 
-    // 3. Fetch original images and clean transparent signature
+    // 3. Fetch original images and bundle them
     const imagesToFetch = [
       {
         url: '/public/assets/aistudio/sandi_vehicle_d117164c.jpg',
@@ -53,12 +42,10 @@ if exist "%DIRNAME%gradle\\wrapper\\gradle-wrapper.jar" (
         ],
       },
       {
-        // Clean transparent signature
-        url: '/public/assets/aistudio/salam_signature_clean.png',
+        url: '/public/assets/aistudio/salam_signature_bce91b51.jpg',
         targets: [
-          'assets/signature/salam_signature.png',
-          'app/src/main/assets/signature/salam_signature.png',
-          'assets/signature/salam_signature_clean.png',
+          'assets/signature/salam_signature.jpg',
+          'app/src/main/assets/signature/salam_signature.jpg',
         ],
       },
     ];

@@ -11,56 +11,60 @@ import java.io.File
 import java.io.FileOutputStream
 
 object PdfGenerator {
-    fun generateDailyVoucherPdf(context: Context, voucher: VoucherEntity, isSlipFormat: Boolean): File {
+    fun generateVoucherPdf(context: Context, voucher: VoucherEntity, isSlipFormat: Boolean): File {
         val pdfDocument = PdfDocument()
         val width = if (isSlipFormat) 250 else 595
-        val height = if (isSlipFormat) 500 else 842
+        val height = if (isSlipFormat) 400 else 842
         val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas: Canvas = page.canvas
         val paint = Paint()
 
+        // Background
         paint.color = Color.WHITE
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
 
-        // Header
-        paint.color = Color.rgb(11, 19, 41)
+        // Header Title
+        paint.color = Color.rgb(15, 23, 42) // Dark Navy
         paint.textSize = if (isSlipFormat) 14f else 22f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         canvas.drawText("SANDI AUTO EASY BIKE", 20f, 40f, paint)
 
         paint.textSize = if (isSlipFormat) 9f else 12f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        canvas.drawText("Company: Sandi | Owner: Abdus Salam (01620230864)", 20f, 60f, paint)
-        canvas.drawText("Daily Voucher: " + voucher.voucherNumber + " | Date: " + voucher.date, 20f, 80f, paint)
+        canvas.drawText("Owner: Abdus Salam | Phone: 01620230864", 20f, 60f, paint)
+        canvas.drawText("Voucher No: " + voucher.voucherNumber, 20f, 80f, paint)
+        canvas.drawText("Date: " + voucher.date + " " + voucher.time, 20f, 95f, paint)
 
-        // Divider
+        // Line
         paint.strokeWidth = 1f
         paint.color = Color.LTGRAY
-        canvas.drawLine(20f, 95f, (width - 20).toFloat(), 95f, paint)
+        canvas.drawLine(20f, 105f, (width - 20).toFloat(), 105f, paint)
 
-        // Summary
+        // Details
         paint.color = Color.BLACK
         paint.textSize = if (isSlipFormat) 10f else 14f
-        canvas.drawText("Total Day Income: BDT " + (voucher.totalIncomePoisha / 100.0), 20f, 125f, paint)
-        canvas.drawText("Total Day Expense: BDT " + (voucher.totalExpensePoisha / 100.0), 20f, 150f, paint)
+        canvas.drawText("Type: " + voucher.type, 20f, 130f, paint)
+        canvas.drawText("Category: " + voucher.category, 20f, 150f, paint)
+        canvas.drawText("Description: " + voucher.description, 20f, 170f, paint)
+        canvas.drawText("Payment Method: " + voucher.paymentMethod, 20f, 190f, paint)
 
-        // Net Profit
-        paint.color = Color.rgb(245, 158, 11)
-        paint.textSize = if (isSlipFormat) 13f else 18f
+        // Amount Box
+        paint.color = Color.rgb(217, 119, 6) // Gold accent
+        paint.textSize = if (isSlipFormat) 14f else 20f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        canvas.drawText("Net Profit / Cash: BDT " + (voucher.netProfitPoisha / 100.0), 20f, 190f, paint)
+        val taka = voucher.amountPoisha / 100.0
+        canvas.drawText("Total: BDT " + taka + " Taka", 20f, 230f, paint)
 
-        // Signature
+        // Footer Thank you
         paint.color = Color.DKGRAY
-        paint.textSize = if (isSlipFormat) 9f else 11f
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        canvas.drawText("Proprietor Signature: Abdus Salam", 20f, 230f, paint)
-        canvas.drawText("Thank you for choosing SANDI Auto Easy Bike!", 20f, 260f, paint)
+        paint.textSize = if (isSlipFormat) 8f else 10f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+        canvas.drawText("Thank you for using SANDI Auto Easy Bike!", 20f, 270f, paint)
 
         pdfDocument.finishPage(page)
 
-        val outputFile = File(context.cacheDir, "daily_voucher_" + voucher.voucherNumber + ".pdf")
+        val outputFile = File(context.cacheDir, "voucher_" + voucher.voucherNumber + ".pdf")
         val outputStream = FileOutputStream(outputFile)
         pdfDocument.writeTo(outputStream)
         pdfDocument.close()

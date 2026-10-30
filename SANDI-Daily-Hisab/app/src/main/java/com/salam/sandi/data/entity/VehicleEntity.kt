@@ -8,7 +8,7 @@ data class VehicleEntity(
     @PrimaryKey
     val id: Int = 1,
     val name: String = "SANDI",
-    val manufacturer: String = "Sandi", // Strictly Sandi Company
+    val manufacturer: String = "HUAIHAI / ZONGSHEN",
     val model: String = "SANDI Passenger Electric Easy Bike",
     val registrationNumber: String = "কুমিল্লা-থ-১১-৪৫০২",
     val purchaseDate: String = "2025-03-15",

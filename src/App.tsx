@@ -9,7 +9,7 @@ import {
   VehicleProfile, 
   AppSettings 
 } from './types';
-import { SandiStorage, getTodayDate } from './utils/storage';
+import { SandiStorage } from './utils/storage';
 import { translations } from './utils/translations';
 import { Header } from './components/Header';
 import { BottomNav, TabKey } from './components/BottomNav';
@@ -173,14 +173,11 @@ export default function App() {
     setMaintenanceRecords(SandiStorage.getMaintenanceRecords());
   };
 
-  // Active selected date for daily consolidated voucher
-  const [selectedVoucherDate, setSelectedVoucherDate] = useState<string>(getTodayDate());
-
   const handleSelectVoucherTransaction = (
     tx: IncomeItem | ExpenseItem,
     type: 'INCOME' | 'EXPENSE'
   ) => {
-    setSelectedVoucherDate(tx.date);
+    setActiveDraftTx({ tx, type });
     setCurrentTab('voucher');
     setSubTab(null);
   };
@@ -281,7 +278,8 @@ export default function App() {
             vehicle={vehicle}
             lang={settings.language}
             onSaveVoucher={handleSaveVoucher}
-            selectedDate={selectedVoucherDate}
+            activeDraftTx={activeDraftTx}
+            onClearActiveDraftTx={() => setActiveDraftTx(null)}
           />
         )}
 

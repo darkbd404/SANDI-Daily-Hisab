@@ -52,25 +52,22 @@ export interface ExpenseItem {
   createdAt: number;
 }
 
-// 1 Consolidated Master Voucher per day: Contains both Income & Expense breakdown and Net Hisab
-export interface DailyVoucherItem {
+export interface VoucherItem {
   id: string;
-  voucherNumber: string; // e.g. SDI-2026-10-30 or SDI-2026-000001
-  date: string; // YYYY-MM-DD (1 voucher per day)
-  generatedTime: string;
-  totalIncomePoisha: number;
-  totalExpensePoisha: number;
-  netProfitPoisha: number; // totalIncomePoisha - totalExpensePoisha
-  incomes: IncomeItem[];
-  expenses: ExpenseItem[];
+  voucherNumber: string; // e.g. SDI-2026-000001
+  type: TransactionType;
+  transactionId: string;
+  amountPoisha: number;
+  date: string;
+  time: string;
+  category: string;
+  description: string;
+  paymentMethod: PaymentMethod;
+  location: string;
   ownerSnapshot: OwnerProfile;
   vehicleSnapshot: VehicleProfile;
-  notes?: string;
   createdAt: number;
 }
-
-// Backward compatibility alias
-export type VoucherItem = DailyVoucherItem;
 
 export interface BatteryRecord {
   id: string;
@@ -111,7 +108,7 @@ export interface OwnerProfile {
 
 export interface VehicleProfile {
   name: string;
-  manufacturer: string; // Strictly "Sandi"
+  manufacturer: string;
   model: string;
   registrationNumber: string;
   purchaseDate: string;
@@ -143,7 +140,7 @@ export interface BackupData {
   vehicleProfile: VehicleProfile;
   incomes: IncomeItem[];
   expenses: ExpenseItem[];
-  vouchers: DailyVoucherItem[];
+  vouchers: VoucherItem[];
   batteryRecords: BatteryRecord[];
   maintenanceRecords: MaintenanceRecord[];
   settings: AppSettings;

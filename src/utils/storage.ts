@@ -1,7 +1,7 @@
 import {
   IncomeItem,
   ExpenseItem,
-  DailyVoucherItem,
+  VoucherItem,
   BatteryRecord,
   MaintenanceRecord,
   OwnerProfile,
@@ -20,14 +20,13 @@ export const INITIAL_OWNER_PROFILE: OwnerProfile = {
   mobile2: '০১৬৩২৩৩১৮৬৪',
   email: 'salam230864@gmail.com',
   photoUrl: '/public/assets/aistudio/abdus_salam_968dd59e.jpg',
-  // Clean transparent background signature
-  signatureUrl: '/public/assets/aistudio/salam_signature_clean.png',
+  signatureUrl: '/public/assets/aistudio/salam_signature_bce91b51.jpg',
 };
 
 export const INITIAL_VEHICLE_PROFILE: VehicleProfile = {
   name: 'SANDI',
-  manufacturer: 'Sandi', // Strictly Sandi Company
-  model: 'SANDI Passenger Electric Easy Bike',
+  manufacturer: 'HUAIHAI / ZONGSHEN',
+  model: 'SANDI Auto Easy Bike (Passenger Electric)',
   registrationNumber: 'কুমিল্লা-থ-১১-৪৫০২',
   purchaseDate: '2025-03-15',
   purchasePricePoisha: 28500000, // 2,85,000 BDT
@@ -35,7 +34,7 @@ export const INITIAL_VEHICLE_PROFILE: VehicleProfile = {
   batteryVoltage: '60V (5 x 12V 130Ah)',
   motorSpecs: '1200W Differential High Torque Brushless DC (BLDC)',
   photoUrl: '/public/assets/aistudio/sandi_vehicle_d117164c.jpg',
-  notes: 'Sandi Company-র ব্যক্তিগত যাত্রীবাহী অটো ইজি বাইক। রেগুলার রুট: বরুড়া বাজার - আমড়াতলী - ফলকামুড়ী।',
+  notes: 'ব্যক্তিগত যাত্রীবাহী অটো ইজি বাইক। রেগুলার রুট: বরুড়া বাজার - আমড়াতলী - ফলকামুড়ী।',
 };
 
 export const INITIAL_SETTINGS: AppSettings = {
@@ -228,52 +227,23 @@ export const INITIAL_MAINTENANCE_RECORDS: MaintenanceRecord[] = [
   },
 ];
 
-// Helper to compute a single consolidated daily voucher for any given date
-export const buildDailyConsolidatedVoucher = (
-  date: string,
-  incomes: IncomeItem[],
-  expenses: ExpenseItem[],
-  owner: OwnerProfile,
-  vehicle: VehicleProfile
-): DailyVoucherItem => {
-  const dayIncomes = incomes.filter((i) => i.date === date);
-  const dayExpenses = expenses.filter((e) => e.date === date);
-
-  const totalIncomePoisha = dayIncomes.reduce((sum, item) => sum + item.amountPoisha, 0);
-  const totalExpensePoisha = dayExpenses.reduce((sum, item) => sum + item.amountPoisha, 0);
-  const netProfitPoisha = totalIncomePoisha - totalExpensePoisha;
-
-  return {
-    id: `voucher-${date}`,
-    voucherNumber: `SDI-${date.replace(/-/g, '')}`,
-    date,
-    generatedTime: getCurrentTime(),
-    totalIncomePoisha,
-    totalExpensePoisha,
-    netProfitPoisha,
-    incomes: dayIncomes,
-    expenses: dayExpenses,
-    ownerSnapshot: { ...owner },
-    vehicleSnapshot: { ...vehicle, manufacturer: 'Sandi' },
-    createdAt: Date.now(),
-  };
-};
-
-export const INITIAL_VOUCHERS: DailyVoucherItem[] = [
-  buildDailyConsolidatedVoucher(
-    today,
-    INITIAL_INCOMES,
-    INITIAL_EXPENSES,
-    INITIAL_OWNER_PROFILE,
-    INITIAL_VEHICLE_PROFILE
-  ),
-  buildDailyConsolidatedVoucher(
-    '2026-10-29',
-    INITIAL_INCOMES,
-    INITIAL_EXPENSES,
-    INITIAL_OWNER_PROFILE,
-    INITIAL_VEHICLE_PROFILE
-  ),
+export const INITIAL_VOUCHERS: VoucherItem[] = [
+  {
+    id: 'vouc-001',
+    voucherNumber: 'SDI-2026-000001',
+    type: 'INCOME',
+    transactionId: 'inc-002',
+    amountPoisha: 60000,
+    date: today,
+    time: '11:15',
+    category: 'RESERVED_TRIP',
+    description: 'আমড়াতলী বাজার থেকে বরুড়া উপজেলা স্বাস্থ্য কমপ্লেক্স রোগী রিজার্ভ',
+    paymentMethod: 'BKASH',
+    location: 'আমড়াতলী - বরুড়া',
+    ownerSnapshot: INITIAL_OWNER_PROFILE,
+    vehicleSnapshot: INITIAL_VEHICLE_PROFILE,
+    createdAt: Date.now() - 1000 * 60 * 180,
+  },
 ];
 
 // LocalStorage Keys
@@ -285,7 +255,9 @@ const STORAGE_KEYS = {
   EXPENSES: 'sandi_expenses',
   BATTERY: 'sandi_battery_records',
   MAINTENANCE: 'sandi_maintenance_records',
-  VOUCHERS: 'sandi_daily_vouchers',
+  VOUCHERS: 'sandi_vouchers',
+  VOUCHER_COUNTER: 'sandi_voucher_counter',
+  AUTH_SESSION: 'sandi_auth_session',
 };
 
 // PIN hash helper with salt
@@ -304,17 +276,12 @@ export const generateSalt = (): string => {
   return Math.random().toString(36).substring(2, 10);
 };
 
+// Data Store Accessors
 export class SandiStorage {
   static getOwnerProfile(): OwnerProfile {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.OWNER);
-      if (data) {
-        const p = JSON.parse(data);
-        // Ensure signature points to clean transparent signature
-        p.signatureUrl = '/public/assets/aistudio/salam_signature_clean.png';
-        return p;
-      }
-      return INITIAL_OWNER_PROFILE;
+      return data ? JSON.parse(data) : INITIAL_OWNER_PROFILE;
     } catch {
       return INITIAL_OWNER_PROFILE;
     }
@@ -327,19 +294,13 @@ export class SandiStorage {
   static getVehicleProfile(): VehicleProfile {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.VEHICLE);
-      if (data) {
-        const v = JSON.parse(data);
-        v.manufacturer = 'Sandi'; // Strictly Sandi
-        return v;
-      }
-      return INITIAL_VEHICLE_PROFILE;
+      return data ? JSON.parse(data) : INITIAL_VEHICLE_PROFILE;
     } catch {
       return INITIAL_VEHICLE_PROFILE;
     }
   }
 
   static saveVehicleProfile(profile: VehicleProfile): void {
-    profile.manufacturer = 'Sandi';
     localStorage.setItem(STORAGE_KEYS.VEHICLE, JSON.stringify(profile));
   }
 
@@ -408,7 +369,7 @@ export class SandiStorage {
     localStorage.setItem(STORAGE_KEYS.MAINTENANCE, JSON.stringify(records));
   }
 
-  static getVouchers(): DailyVoucherItem[] {
+  static getVouchers(): VoucherItem[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.VOUCHERS);
       return data ? JSON.parse(data) : INITIAL_VOUCHERS;
@@ -417,47 +378,18 @@ export class SandiStorage {
     }
   }
 
-  static saveVouchers(vouchers: DailyVoucherItem[]): void {
+  static saveVouchers(vouchers: VoucherItem[]): void {
     localStorage.setItem(STORAGE_KEYS.VOUCHERS, JSON.stringify(vouchers));
   }
 
-  // Get or generate the single Daily Master Voucher for a date
-  static getDailyVoucherForDate(
-    date: string,
-    incomes: IncomeItem[],
-    expenses: ExpenseItem[],
-    owner: OwnerProfile,
-    vehicle: VehicleProfile
-  ): DailyVoucherItem {
-    const vouchers = this.getVouchers();
-    const existing = vouchers.find((v) => v.date === date);
-    if (existing) {
-      // Re-sync with latest incomes & expenses for that day
-      const dayIncomes = incomes.filter((i) => i.date === date);
-      const dayExpenses = expenses.filter((e) => e.date === date);
-      const totalIncomePoisha = dayIncomes.reduce((s, i) => s + i.amountPoisha, 0);
-      const totalExpensePoisha = dayExpenses.reduce((s, e) => s + e.amountPoisha, 0);
-      return {
-        ...existing,
-        incomes: dayIncomes,
-        expenses: dayExpenses,
-        totalIncomePoisha,
-        totalExpensePoisha,
-        netProfitPoisha: totalIncomePoisha - totalExpensePoisha,
-        ownerSnapshot: { ...owner, signatureUrl: '/public/assets/aistudio/salam_signature_clean.png' },
-        vehicleSnapshot: { ...vehicle, manufacturer: 'Sandi' },
-      };
-    }
-    return buildDailyConsolidatedVoucher(date, incomes, expenses, owner, vehicle);
-  }
-
-  // Get all unique dates in the past 30 days that have transactions
-  static getRecentTransactionDates(incomes: IncomeItem[], expenses: ExpenseItem[]): string[] {
-    const datesSet = new Set<string>();
-    incomes.forEach((i) => datesSet.add(i.date));
-    expenses.forEach((e) => datesSet.add(e.date));
-    datesSet.add(getTodayDate());
-    return Array.from(datesSet).sort((a, b) => b.localeCompare(a));
+  static getNextVoucherNumber(): string {
+    const raw = localStorage.getItem(STORAGE_KEYS.VOUCHER_COUNTER);
+    let counter = raw ? parseInt(raw, 10) : 2;
+    if (isNaN(counter)) counter = 2;
+    localStorage.setItem(STORAGE_KEYS.VOUCHER_COUNTER, (counter + 1).toString());
+    const year = new Date().getFullYear();
+    const formattedNum = String(counter).padStart(6, '0');
+    return `SDI-${year}-${formattedNum}`;
   }
 
   static createFullBackup(): BackupData {
