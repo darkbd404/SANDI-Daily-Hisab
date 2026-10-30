@@ -20,8 +20,8 @@ APP_HOME=$(cd "$(dirname "$0")" && pwd)
 if [ -f "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" ]; then
     exec java -jar "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" "$@"
 fi
-echo "Gradle not found locally. Please ensure gradle is installed or run with gradle command."
-exit 1
+echo "Attempting to invoke gradle command directly..."
+gradle "$@"
 `;
     zip.file('gradlew', gradlewScript);
 

@@ -61,7 +61,7 @@ jobs:
           # Change to project directory and ensure wrapper exists
           cd "$PROJ_DIR"
           ls -la
-          gradle wrapper --gradle-version 8.10.2 || true
+          gradle wrapper --gradle-version 8.10.2 --distribution-type bin || true
           chmod +x gradlew || true
 
       - name: Build Debug APK
@@ -69,7 +69,7 @@ jobs:
           PROJ_DIR="${{ steps.prep.outputs.project_dir }}"
           cd "$PROJ_DIR"
           echo "Starting Gradle build in $PROJ_DIR..."
-          ./gradlew assembleDebug --stacktrace --no-daemon || gradle assembleDebug --stacktrace --no-daemon
+          gradle assembleDebug --stacktrace --no-daemon || ./gradlew assembleDebug --stacktrace --no-daemon
 
       - name: Prepare APK for Distribution
         id: apk_prep
