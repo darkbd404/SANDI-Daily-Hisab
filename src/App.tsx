@@ -9,7 +9,7 @@ import {
   VehicleProfile, 
   AppSettings 
 } from './types';
-import { SandiStorage } from './utils/storage';
+import { SandiStorage, getTodayDate } from './utils/storage';
 import { translations } from './utils/translations';
 import { Header } from './components/Header';
 import { BottomNav, TabKey } from './components/BottomNav';
@@ -173,11 +173,26 @@ export default function App() {
     setMaintenanceRecords(SandiStorage.getMaintenanceRecords());
   };
 
+  // Handler: Clear all transactions to start 100% fresh
+  const handleClearAllTransactions = () => {
+    if (window.confirm('আপনি কি নিশ্চিত সকল ডেমো ও লেনদেনের হিসাব মুছে একদম ফ্রেশ (০ ব্যালেন্স) শুরু করতে চান?')) {
+      SandiStorage.clearAllTransactions();
+      setIncomes([]);
+      setExpenses([]);
+      setVouchers([]);
+      setBatteryRecords([]);
+      setMaintenanceRecords([]);
+    }
+  };
+
+  // Active selected date for daily consolidated voucher
+  const [selectedVoucherDate, setSelectedVoucherDate] = useState<string>(getTodayDate());
+
   const handleSelectVoucherTransaction = (
     tx: IncomeItem | ExpenseItem,
     type: 'INCOME' | 'EXPENSE'
   ) => {
-    setActiveDraftTx({ tx, type });
+    setSelectedVoucherDate(tx.date);
     setCurrentTab('voucher');
     setSubTab(null);
   };
@@ -278,8 +293,7 @@ export default function App() {
             vehicle={vehicle}
             lang={settings.language}
             onSaveVoucher={handleSaveVoucher}
-            activeDraftTx={activeDraftTx}
-            onClearActiveDraftTx={() => setActiveDraftTx(null)}
+            selectedDate={selectedVoucherDate}
           />
         )}
 
@@ -295,6 +309,7 @@ export default function App() {
             onOpenSecurity={() => setIsSecurityModalOpen(true)}
             onOpenAndroidHub={() => setIsAndroidHubModalOpen(true)}
             onUpdateSettings={handleUpdateSettings}
+            onClearTransactions={handleClearAllTransactions}
           />
         )}
 

@@ -15,14 +15,14 @@ interface VehicleDao {
 
 @Dao
 interface VoucherDao {
-    @Query("SELECT * FROM vouchers ORDER BY createdAt DESC")
+    @Query("SELECT * FROM daily_vouchers ORDER BY date DESC")
     fun getAllVouchers(): Flow<List<VoucherEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVoucher(voucher: VoucherEntity)
 
-    @Query("SELECT COUNT(*) FROM vouchers")
-    suspend fun getVoucherCount(): Int
+    @Query("DELETE FROM daily_vouchers")
+    suspend fun clearAllVouchers()
 }
 
 @Dao
@@ -32,6 +32,9 @@ interface BatteryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBatteryRecord(record: BatteryEntity)
+
+    @Query("DELETE FROM battery_records")
+    suspend fun clearAllBatteryRecords()
 }
 
 @Dao
@@ -41,6 +44,9 @@ interface MaintenanceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMaintenanceRecord(record: MaintenanceEntity)
+
+    @Query("DELETE FROM maintenance_records")
+    suspend fun clearAllMaintenanceRecords()
 }
 
 @Dao

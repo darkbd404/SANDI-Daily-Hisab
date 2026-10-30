@@ -16,7 +16,7 @@ data class IncomeEntity(
     val startLocation: String,
     val destination: String,
     val distanceKm: Double? = null,
-    val paymentMethod: String, // CASH, BKASH, NAGAD, etc.
+    val paymentMethod: String,
     val notes: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )

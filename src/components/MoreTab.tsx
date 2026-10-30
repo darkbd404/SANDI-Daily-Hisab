@@ -14,7 +14,8 @@ import {
   Moon, 
   Sun,
   ShieldCheck,
-  Zap
+  Zap,
+  Trash2
 } from 'lucide-react';
 import { translations, Language } from '../utils/translations';
 import { AppSettings, OwnerProfile, VehicleProfile } from '../types';
@@ -30,6 +31,7 @@ interface MoreTabProps {
   onOpenSecurity: () => void;
   onOpenAndroidHub: () => void;
   onUpdateSettings: (settings: AppSettings) => void;
+  onClearTransactions?: () => void;
 }
 
 interface MenuItem {
@@ -57,6 +59,7 @@ export const MoreTab: React.FC<MoreTabProps> = ({
   onOpenSecurity,
   onOpenAndroidHub,
   onUpdateSettings,
+  onClearTransactions,
 }) => {
   const t = translations[lang];
 
@@ -128,6 +131,20 @@ export const MoreTab: React.FC<MoreTabProps> = ({
           subtitle: 'সম্পূর্ণ Android Kotlin DSL সোর্স কোড (.ZIP) ও গিটহাব বিল্ড গাইড',
           action: onOpenAndroidHub,
           highlight: true,
+        },
+      ],
+    },
+    {
+      title: lang === 'bn' ? 'ডাটা রিসেট ও ফ্রেশ খাতা' : 'Data Reset',
+      items: [
+        {
+          id: 'clear-data',
+          icon: <Trash2 className="w-5 h-5 text-rose-400" />,
+          title: lang === 'bn' ? 'সকল লেনদেন মুছে ফ্রেশ শুরু করুন (০ ব্যালেন্স)' : 'Clear All & Reset to ৳ 0',
+          subtitle: lang === 'bn' ? 'আপনার আসল হিসাব নিজে এন্ট্রি দেওয়ার জন্য খাতা খালি করুন' : 'Remove all transactions to start fresh',
+          action: () => {
+            if (onClearTransactions) onClearTransactions();
+          },
         },
       ],
     },

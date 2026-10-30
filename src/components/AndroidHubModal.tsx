@@ -155,7 +155,7 @@ export const AndroidHubModal: React.FC<AndroidHubModalProps> = ({ lang, onClose 
                   <div>
                     <strong className="text-slate-200 block">APK ডাউনলোড ও ইনস্টল</strong>
                     <span className="text-slate-400 text-[11px] block mt-0.5">
-                      ২ মিনিটে সফল বিল্ডের পর 'SANDI-Debug-APK' থেকে আপনার আসল অ্যান্ড্রয়েড অ্যাপ সরাসরি ফোনে ইনস্টল করে নিন।
+                      বিল্ড সফল হলে রিপোজিটরির <strong>Releases</strong> সেকশন অথবা অ্যাকশনস সামারির ডিরেক্ট লিংক থেকে <strong className="text-amber-400">SANDI-Daily-Hisab-Debug.apk</strong> সরাসরি ফোনে ডাউনলোড করে ইনস্টল করে নিন (স্টোরেজ কোটার কোনো ঝামেলা নেই!)।
                     </span>
                   </div>
                 </div>

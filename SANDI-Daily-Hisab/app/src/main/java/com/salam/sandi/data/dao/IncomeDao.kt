@@ -12,15 +12,6 @@ interface IncomeDao {
     @Query("SELECT * FROM incomes WHERE date = :date ORDER BY time DESC")
     fun getIncomesByDate(date: String): Flow<List<IncomeEntity>>
 
-    @Query("SELECT SUM(amountPoisha) FROM incomes WHERE date = :date")
-    fun getTodayIncomeSum(date: String): Flow<Long?>
-
-    @Query("SELECT SUM(amountPoisha) FROM incomes WHERE date LIKE :monthPrefix || '%'")
-    fun getMonthlyIncomeSum(monthPrefix: String): Flow<Long?>
-
-    @Query("SELECT SUM(amountPoisha) FROM incomes")
-    fun getTotalIncomeSum(): Flow<Long?>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIncome(income: IncomeEntity)
 
@@ -29,4 +20,7 @@ interface IncomeDao {
 
     @Delete
     suspend fun deleteIncome(income: IncomeEntity)
+
+    @Query("DELETE FROM incomes")
+    suspend fun clearAllIncomes()
 }

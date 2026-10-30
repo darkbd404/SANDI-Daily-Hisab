@@ -23,15 +23,22 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Set execute permission for gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Make gradlew executable
         run: chmod +x gradlew || true
+        working-directory: SANDI-Daily-Hisab
 
       - name: Build Debug APK
-        run: bash gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
+        working-directory: SANDI-Daily-Hisab
 
       - name: Upload Debug APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SANDI-Debug-APK
-          path: app/build/outputs/apk/debug/*.apk
+          path: SANDI-Daily-Hisab/app/build/outputs/apk/debug/*.apk
           retention-days: 14

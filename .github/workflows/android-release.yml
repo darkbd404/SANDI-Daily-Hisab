@@ -7,7 +7,6 @@ jobs:
   build-release:
     name: Build Signed Release APK
     runs-on: ubuntu-latest
-    if: github.repository_owner != ''
 
     steps:
       - name: Checkout Repository
@@ -20,14 +19,22 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew || true
+        working-directory: SANDI-Daily-Hisab
+
       - name: Build Release APK
-        run: |
-          chmod +x gradlew || true
-          bash gradlew assembleRelease --stacktrace
+        run: gradle assembleRelease --stacktrace
+        working-directory: SANDI-Daily-Hisab
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: SANDI-Release-APK
-          path: app/build/outputs/apk/release/*.apk
+          path: SANDI-Daily-Hisab/app/build/outputs/apk/release/*.apk
           retention-days: 30

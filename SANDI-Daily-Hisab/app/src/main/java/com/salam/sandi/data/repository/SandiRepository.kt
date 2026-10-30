@@ -26,4 +26,12 @@ class SandiRepository(
     suspend fun deleteExpense(expense: ExpenseEntity) = expenseDao.deleteExpense(expense)
 
     suspend fun addVoucher(voucher: VoucherEntity) = voucherDao.insertVoucher(voucher)
+
+    suspend fun clearAllData() {
+        incomeDao.clearAllIncomes()
+        expenseDao.clearAllExpenses()
+        voucherDao.clearAllVouchers()
+        batteryDao.clearAllBatteryRecords()
+        maintenanceDao.clearAllMaintenanceRecords()
+    }
 }

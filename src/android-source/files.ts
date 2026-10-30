@@ -1,6 +1,6 @@
 /**
- * Complete Android Kotlin DSL, Room, Jetpack Compose, GitHub Actions, and Resource Files
- * for SANDI Daily Hisab (com.salam.sandi)
+ * Complete Android Kotlin DSL, Jetpack Compose, Material 3, Room, Resources,
+ * ViewModels, and GitHub Actions for SANDI Daily Hisab (com.salam.sandi)
  */
 
 export interface AndroidFile {
@@ -12,8 +12,7 @@ export const ANDROID_PROJECT_FILES: AndroidFile[] = [
   // 1. Root build.gradle.kts
   {
     path: 'build.gradle.kts',
-    content: `// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
+    content: `plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
@@ -157,16 +156,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -232,7 +226,7 @@ dependencies {
   // 7. app/proguard-rules.pro
   {
     path: 'app/proguard-rules.pro',
-    content: `# SANDI Daily Hisab Proguard rules
+    content: `# Proguard rules for SANDI Daily Hisab
 -keep class com.salam.sandi.data.entity.** { *; }
 -keep class com.salam.sandi.data.dao.** { *; }
 -dontwarn androidx.work.**
@@ -245,7 +239,7 @@ dependencies {
     content: `<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Strictly offline - NO INTERNET permission -->
+    <!-- Strictly offline - NO INTERNET permission needed -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -275,7 +269,101 @@ dependencies {
 `,
   },
 
-  // 9. GitHub Actions Workflow: android-debug.yml
+  // 9. app/src/main/res/values/strings.xml
+  {
+    path: 'app/src/main/res/values/strings.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SANDI Daily Hisab</string>
+    <string name="app_subtitle">Personal Auto Easy Bike Manager</string>
+    <string name="owner_name">আব্দুছ ছালাম</string>
+    <string name="company_name">Sandi</string>
+    <string name="vehicle_model">SANDI Passenger Electric Easy Bike</string>
+</resources>
+`,
+  },
+
+  // 10. app/src/main/res/values/colors.xml
+  {
+    path: 'app/src/main/res/values/colors.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_navy">#0B1329</color>
+    <color name="primary_black">#020617</color>
+    <color name="gold_accent">#F59E0B</color>
+    <color name="income_green">#10B981</color>
+    <color name="expense_red">#EF4444</color>
+    <color name="white">#FFFFFF</color>
+</resources>
+`,
+  },
+
+  // 11. app/src/main/res/values/themes.xml
+  {
+    path: 'app/src/main/res/values/themes.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SANDIDailyHisab" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/primary_black</item>
+        <item name="android:navigationBarColor">@color/primary_black</item>
+    </style>
+</resources>
+`,
+  },
+
+  // 12. App Launcher Icons
+  {
+    path: 'app/src/main/res/drawable/ic_launcher_background.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#0B1329"
+        android:pathData="M0,0h108v108h-108z"/>
+</vector>
+`,
+  },
+
+  {
+    path: 'app/src/main/res/drawable/ic_launcher_foreground.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Gold Lightning Bolt / Zap Icon for Easy Bike -->
+    <path
+        android:fillColor="#F59E0B"
+        android:pathData="M58,24 L34,56 L52,56 L50,84 L74,52 L56,52 Z"/>
+</vector>
+`,
+  },
+
+  {
+    path: 'app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+`,
+  },
+
+  {
+    path: 'app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml',
+    content: `<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+`,
+  },
+
+  // 13. GitHub Actions Workflows: android-debug.yml
   {
     path: '.github/workflows/android-debug.yml',
     content: `name: Build SANDI Debug APK
@@ -286,6 +374,9 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -301,24 +392,116 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Set execute permission for gradlew
-        run: chmod +x gradlew || true
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Unpack if ZIP was uploaded
+        run: |
+          for f in *.zip; do
+            if [ -f "$f" ]; then
+              echo "Extracting uploaded zip: $f"
+              unzip -o "$f" || true
+            fi
+          done
+
+      - name: Locate and Prepare Project
+        id: prep
+        run: |
+          echo "Listing repository root files:"
+          ls -la
+          SETTINGS_FILE=$(find . -name "settings.gradle.kts" -o -name "settings.gradle" | head -n 1)
+          if [ -z "$SETTINGS_FILE" ]; then
+            echo "::error::No settings.gradle.kts or settings.gradle found in repository!"
+            find . -maxdepth 3
+            exit 1
+          fi
+          PROJ_DIR=$(dirname "$SETTINGS_FILE")
+          echo "Found Android project at: $PROJ_DIR"
+          echo "project_dir=$PROJ_DIR" >> $GITHUB_OUTPUT
+          cd "$PROJ_DIR"
+          gradle wrapper --gradle-version 8.10.2 || true
+          chmod +x gradlew || true
 
       - name: Build Debug APK
-        run: bash gradlew assembleDebug --stacktrace
+        run: |
+          PROJ_DIR="\${{ steps.prep.outputs.project_dir }}"
+          cd "$PROJ_DIR"
+          echo "Starting Gradle build in $PROJ_DIR..."
+          ./gradlew assembleDebug --stacktrace --no-daemon || gradle assembleDebug --stacktrace --no-daemon
 
-      - name: Upload Debug APK Artifact
+      - name: Prepare APK for Distribution
+        id: apk_prep
+        run: |
+          APK_FILE=$(find . -name "*debug*.apk" -o -name "*.apk" | head -n 1)
+          if [ -z "$APK_FILE" ]; then
+            echo "::error::No APK file generated!"
+            exit 1
+          fi
+          echo "Found APK at: $APK_FILE"
+          cp "$APK_FILE" ./SANDI-Daily-Hisab-Debug.apk
+          ls -lh ./SANDI-Daily-Hisab-Debug.apk
+          echo "apk_path=./SANDI-Daily-Hisab-Debug.apk" >> $GITHUB_OUTPUT
+
+      - name: Direct Fast Download Link
+        run: |
+          UPLOAD_URL=$(curl -s -F "file=@./SANDI-Daily-Hisab-Debug.apk" https://bashupload.com/ | grep -o 'https://bashupload.com/[^ ]*' | head -n 1 || echo "")
+          echo "## 🚗 SANDI Daily Hisab - APK বিল্ড সফল হয়েছে!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **স্বত্বাধিকারী:** আব্দুছ ছালাম (০১৬২০২৩০৮৬৪)" >> $GITHUB_STEP_SUMMARY
+          echo "- **যানবাহন:** SANDI Passenger Electric Easy Bike (কুমিল্লা-থ-১১-৪৫০২)" >> $GITHUB_STEP_SUMMARY
+          echo "- **প্রস্তুতকারক:** Sandi" >> $GITHUB_STEP_SUMMARY
+          echo "- **অ্যাপ আইডি:** \\\`com.salam.sandi\\\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -n "$UPLOAD_URL" ]; then
+            echo "### 📥 [সরাসরি APK ডাউনলোড করতে এখানে ট্যাপ করুন]($UPLOAD_URL)" >> $GITHUB_STEP_SUMMARY
+            echo "অথবা নিচের GitHub Release সেকশন থেকেও ডাউনলোড করতে পারেন।" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Direct link: $UPLOAD_URL"
+          fi
+        continue-on-error: true
+
+      - name: Create GitHub Release (Quota-Free APK Download)
+        uses: softprops/action-gh-release@v2
+        if: success()
+        with:
+          tag_name: v1.0.\${{ github.run_number }}
+          name: "SANDI Daily Hisab APK (Build #\${{ github.run_number }})"
+          body: |
+            ### 🚗 SANDI Daily Hisab - Personal Easy Bike Management Android APK
+            
+            - **মালিক:** আব্দুছ ছালাম (০১৬২০২৩০৮৬৪)
+            - **কোম্পানি:** Sandi
+            - **মডেল:** SANDI Passenger Electric Easy Bike (কুমিল্লা-থ-১১-৪৫০২)
+            - **প্যাকেজ:** \`com.salam.sandi\`
+            - **মোড:** ১০০% অফলাইন (Zero Cloud, Zero Internet)
+            
+            **ইনস্টল করার নিয়ম:**
+            নিচের **Assets** থেকে \`SANDI-Daily-Hisab-Debug.apk\` ফাইলটি ডাউনলোড করে আপনার অ্যান্ড্রয়েড ফোনে ইনস্টল করুন।
+          files: |
+            ./SANDI-Daily-Hisab-Debug.apk
+            **/build/outputs/apk/debug/*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Debug APK as Artifact
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: SANDI-Debug-APK
-          path: app/build/outputs/apk/debug/*.apk
-          retention-days: 14
+          path: |
+            ./SANDI-Daily-Hisab-Debug.apk
+            **/build/outputs/apk/debug/*.apk
+          retention-days: 1
 `,
   },
 
-  // 10. GitHub Actions Workflow: android-release.yml
+  // 14. GitHub Actions Workflow: android-release.yml
   {
     path: '.github/workflows/android-release.yml',
     content: `name: Build SANDI Signed Release APK
@@ -330,7 +513,6 @@ jobs:
   build-release:
     name: Build Signed Release APK
     runs-on: ubuntu-latest
-    if: github.repository_owner != ''
 
     steps:
       - name: Checkout Repository
@@ -341,23 +523,53 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Unpack if ZIP was uploaded
+        run: |
+          for f in *.zip; do
+            if [ -f "$f" ]; then
+              echo "Extracting uploaded zip: $f"
+              unzip -o "$f" || true
+            fi
+          done
+
+      - name: Locate and Prepare Project
+        id: prep
+        run: |
+          SETTINGS_FILE=$(find . -name "settings.gradle.kts" -o -name "settings.gradle" | head -n 1)
+          if [ -z "$SETTINGS_FILE" ]; then
+            echo "::error::No settings.gradle.kts found!"
+            exit 1
+          fi
+          PROJ_DIR=$(dirname "$SETTINGS_FILE")
+          echo "project_dir=$PROJ_DIR" >> $GITHUB_OUTPUT
+          cd "$PROJ_DIR"
+          gradle wrapper --gradle-version 8.10.2 || true
+          chmod +x gradlew || true
 
       - name: Build Release APK
         run: |
-          chmod +x gradlew || true
-          bash gradlew assembleRelease --stacktrace
+          PROJ_DIR="\${{ steps.prep.outputs.project_dir }}"
+          cd "$PROJ_DIR"
+          ./gradlew assembleRelease --stacktrace --no-daemon || gradle assembleRelease --stacktrace --no-daemon
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: SANDI-Release-APK
-          path: app/build/outputs/apk/release/*.apk
+          path: |
+            **/build/outputs/apk/release/*.apk
+            **/*.apk
           retention-days: 30
 `,
   },
 
-  // 11. SandiApplication.kt
+  // 15. SandiApplication.kt
   {
     path: 'app/src/main/java/com/salam/sandi/SandiApplication.kt',
     content: `package com.salam.sandi
@@ -387,7 +599,7 @@ class SandiApplication : Application() {
 `,
   },
 
-  // 12. MainActivity.kt
+  // 16. MainActivity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/MainActivity.kt',
     content: `package com.salam.sandi
@@ -423,7 +635,2082 @@ class MainActivity : ComponentActivity() {
 `,
   },
 
-  // 13. Room Entities: IncomeEntity.kt
+  // 17. Compose Theme: Color.kt, Type.kt, Theme.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/theme/Color.kt',
+    content: `package com.salam.sandi.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+val DarkNavy = Color(0xFF0B1329)
+val ObsidianBlack = Color(0xFF020617)
+val CardNavy = Color(0xFF0F172A)
+val GoldAccent = Color(0xFFF59E0B)
+val IncomeGreen = Color(0xFF10B981)
+val ExpenseRed = Color(0xFFEF4444)
+val ProfitSky = Color(0xFF38BDF8)
+val MutedSlate = Color(0xFF94A3B8)
+val TextWhite = Color(0xFFF8FAFC)
+`,
+  },
+
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/theme/Type.kt',
+    content: `package com.salam.sandi.ui.theme
+
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+
+val Typography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
+    )
+)
+`,
+  },
+
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/theme/Theme.kt',
+    content: `package com.salam.sandi.ui.theme
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.runtime.Composable
+
+private val DarkColorScheme = darkColorScheme(
+    primary = GoldAccent,
+    secondary = IncomeGreen,
+    tertiary = ProfitSky,
+    background = ObsidianBlack,
+    surface = CardNavy,
+    onPrimary = ObsidianBlack,
+    onBackground = TextWhite,
+    onSurface = TextWhite
+)
+
+@Composable
+fun SANDITheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colorScheme = DarkColorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+`,
+  },
+
+  // 18. Compose Navigation: SandiNavigation.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/navigation/SandiNavigation.kt',
+    content: `package com.salam.sandi.ui.navigation
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import com.salam.sandi.data.repository.SandiRepository
+import com.salam.sandi.ui.dashboard.DashboardScreen
+import com.salam.sandi.ui.expense.ExpenseScreen
+import com.salam.sandi.ui.income.IncomeScreen
+import com.salam.sandi.ui.more.MoreScreen
+import com.salam.sandi.ui.voucher.DailyVoucherScreen
+import com.salam.sandi.ui.theme.*
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SandiNavigation(repository: SandiRepository) {
+    var selectedTab by remember { mutableStateOf(0) }
+
+    Scaffold(
+        bottomBar = {
+            NavigationBar(
+                containerColor = CardNavy,
+                contentColor = TextWhite
+            ) {
+                NavigationBarItem(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    icon = { Icon(Icons.Default.Dashboard, contentDescription = "Dashboard") },
+                    label = { Text("ড্যাশবোর্ড") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = GoldAccent,
+                        selectedTextColor = GoldAccent,
+                        indicatorColor = GoldAccent.copy(alpha = 0.2f),
+                        unselectedIconColor = MutedSlate,
+                        unselectedTextColor = MutedSlate
+                    )
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    icon = { Icon(Icons.Default.TrendingUp, contentDescription = "Income") },
+                    label = { Text("আয়") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = IncomeGreen,
+                        selectedTextColor = IncomeGreen,
+                        indicatorColor = IncomeGreen.copy(alpha = 0.2f),
+                        unselectedIconColor = MutedSlate,
+                        unselectedTextColor = MutedSlate
+                    )
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    icon = { Icon(Icons.Default.TrendingDown, contentDescription = "Expense") },
+                    label = { Text("ব্যয়") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = ExpenseRed,
+                        selectedTextColor = ExpenseRed,
+                        indicatorColor = ExpenseRed.copy(alpha = 0.2f),
+                        unselectedIconColor = MutedSlate,
+                        unselectedTextColor = MutedSlate
+                    )
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 3,
+                    onClick = { selectedTab = 3 },
+                    icon = { Icon(Icons.Default.ReceiptLong, contentDescription = "Voucher") },
+                    label = { Text("ভাউচার") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = GoldAccent,
+                        selectedTextColor = GoldAccent,
+                        indicatorColor = GoldAccent.copy(alpha = 0.2f),
+                        unselectedIconColor = MutedSlate,
+                        unselectedTextColor = MutedSlate
+                    )
+                )
+                NavigationBarItem(
+                    selected = selectedTab == 4,
+                    onClick = { selectedTab = 4 },
+                    icon = { Icon(Icons.Default.Menu, contentDescription = "More") },
+                    label = { Text("অন্যান্য") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = ProfitSky,
+                        selectedTextColor = ProfitSky,
+                        indicatorColor = ProfitSky.copy(alpha = 0.2f),
+                        unselectedIconColor = MutedSlate,
+                        unselectedTextColor = MutedSlate
+                    )
+                )
+            }
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            when (selectedTab) {
+                0 -> DashboardScreen(
+                    repository = repository,
+                    onNavigateToVoucher = { selectedTab = 3 }
+                )
+                1 -> IncomeScreen(repository = repository)
+                2 -> ExpenseScreen(repository = repository)
+                3 -> DailyVoucherScreen(repository = repository)
+                4 -> MoreScreen(repository = repository)
+            }
+        }
+    }
+}
+`,
+  },
+
+  // 19. Compose Screens: DashboardScreen.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/dashboard/DashboardScreen.kt',
+    content: `package com.salam.sandi.ui.dashboard
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.salam.sandi.data.entity.ExpenseEntity
+import com.salam.sandi.data.entity.IncomeEntity
+import com.salam.sandi.data.repository.SandiRepository
+import com.salam.sandi.ui.components.AddExpenseDialog
+import com.salam.sandi.ui.components.AddIncomeDialog
+import com.salam.sandi.ui.theme.*
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
+
+@Composable
+fun DashboardScreen(
+    repository: SandiRepository,
+    onNavigateToVoucher: () -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val incomes by repository.allIncomes.collectAsState(initial = emptyList())
+    val expenses by repository.allExpenses.collectAsState(initial = emptyList())
+
+    val todayDate = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()) }
+
+    var showAddIncomeDialog by remember { mutableStateOf(false) }
+    var showAddExpenseDialog by remember { mutableStateOf(false) }
+
+    val todayIncomes = incomes.filter { it.date == todayDate }
+    val todayExpenses = expenses.filter { it.date == todayDate }
+
+    val todayIncomePoisha = todayIncomes.sumOf { it.amountPoisha }
+    val todayExpensePoisha = todayExpenses.sumOf { it.amountPoisha }
+    val todayNetProfitPoisha = todayIncomePoisha - todayExpensePoisha
+
+    val totalIncomePoisha = incomes.sumOf { it.amountPoisha }
+    val totalExpensePoisha = expenses.sumOf { it.amountPoisha }
+    val totalNetProfitPoisha = totalIncomePoisha - totalExpensePoisha
+
+    if (showAddIncomeDialog) {
+        AddIncomeDialog(
+            onDismiss = { showAddIncomeDialog = false },
+            onSave = { newIncome ->
+                coroutineScope.launch {
+                    repository.addIncome(newIncome)
+                    showAddIncomeDialog = false
+                }
+            }
+        )
+    }
+
+    if (showAddExpenseDialog) {
+        AddExpenseDialog(
+            onDismiss = { showAddExpenseDialog = false },
+            onSave = { newExpense ->
+                coroutineScope.launch {
+                    repository.addExpense(newExpense)
+                    showAddExpenseDialog = false
+                }
+            }
+        )
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ObsidianBlack)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(GoldAccent),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Bolt,
+                            contentDescription = "SANDI",
+                            tint = ObsidianBlack,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Column {
+                        Text(
+                            text = "SANDI",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Black,
+                            color = TextWhite,
+                            letterSpacing = 1.sp
+                        )
+                        Text(
+                            text = "DAILY HISAB",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = GoldAccent,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Surface(
+                    color = IncomeGreen.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "১০০% অফলাইন",
+                        color = IncomeGreen,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy),
+                shape = RoundedCornerShape(20.dp),
+                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(GoldAccent.copy(alpha = 0.3f)))
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "SANDI · Sandi",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = TextWhite
+                        )
+                        Surface(
+                            color = IncomeGreen.copy(alpha = 0.2f),
+                            shape = CircleShape
+                        ) {
+                            Text(
+                                text = "সক্রিয় গাড়ি",
+                                color = IncomeGreen,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = "আব্দুছ ছালাম · ফলকামুড়ী, আমড়াতলী বাজার, বরুড়া",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MutedSlate
+                    )
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Surface(
+                            color = ObsidianBlack.copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "কুমিল্লা-থ-১১-৪৫০২",
+                                color = GoldAccent,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                        Surface(
+                            color = ObsidianBlack.copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "60V (5 x 12V 130Ah)",
+                                color = ProfitSky,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    Divider(color = ObsidianBlack.copy(alpha = 0.5f), thickness = 1.dp)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = { showAddIncomeDialog = true },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = IncomeGreen),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(vertical = 10.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null, tint = ObsidianBlack, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "আয় যোগ",
+                                color = ObsidianBlack,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        Button(
+                            onClick = { showAddExpenseDialog = true },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(containerColor = ExpenseRed),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(vertical = 10.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = null, tint = TextWhite, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "ব্যয় যোগ",
+                                color = TextWhite,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+
+                    OutlinedButton(
+                        onClick = onNavigateToVoucher,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        border = ButtonDefaults.outlinedButtonBorder.copy(brush = androidx.compose.ui.graphics.SolidColor(GoldAccent)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = GoldAccent)
+                    ) {
+                        Icon(Icons.Default.ReceiptLong, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "ভাউচার তৈরি করুন",
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "আজকের সার্বিক হিসাব (\${todayDate})",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = TextWhite
+                )
+                Text(
+                    text = "\${todayIncomes.size} টি ট্রিপ",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MutedSlate
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Card(
+                    modifier = Modifier.weight(1f),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(text = "আজকের আয়", style = MaterialTheme.typography.labelSmall, color = MutedSlate)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "৳ \${todayIncomePoisha / 100.0}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = IncomeGreen
+                        )
+                        Text(
+                            text = "\${todayIncomes.size} টি এন্ট্রি",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MutedSlate.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                Card(
+                    modifier = Modifier.weight(1f),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(text = "আজকের ব্যয়", style = MaterialTheme.typography.labelSmall, color = MutedSlate)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "৳ \${todayExpensePoisha / 100.0}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = ExpenseRed
+                        )
+                        Text(
+                            text = "\${todayExpenses.size} টি এন্ট্রি",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MutedSlate.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(text = "আজকের নিট জমা / লাভ", style = MaterialTheme.typography.labelSmall, color = MutedSlate)
+                        Text(
+                            text = "৳ \${todayNetProfitPoisha / 100.0}",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Black,
+                            color = if (todayNetProfitPoisha >= 0) GoldAccent else ExpenseRed
+                        )
+                    }
+                    Text(
+                        text = "মোট লাভ: ৳ \${totalNetProfitPoisha / 100.0}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = ProfitSky
+                    )
+                }
+            }
+        }
+
+        item {
+            Text(
+                text = "আজকের সাম্প্রতিক এন্ট্রি সমূহ",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = TextWhite,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
+        if (todayIncomes.isEmpty() && todayExpenses.isEmpty()) {
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ReceiptLong,
+                            contentDescription = null,
+                            tint = MutedSlate,
+                            modifier = Modifier.size(36.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "আজকে কোনো আয় বা ব্যয় এন্ট্রি করা হয়নি",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MutedSlate
+                        )
+                        Text(
+                            text = "উপরের বাটন দিয়ে আপনার আসল হিসাব যুক্ত করুন",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MutedSlate.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+            }
+        } else {
+            items(todayIncomes) { inc ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(
+                                    color = IncomeGreen.copy(alpha = 0.2f),
+                                    shape = RoundedCornerShape(4.dp)
+                                ) {
+                                    Text(
+                                        text = "আয়",
+                                        color = IncomeGreen,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = inc.tripDescription,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                            }
+                            Text(
+                                text = "\${inc.time} · \${inc.startLocation} ➔ \${inc.destination}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MutedSlate
+                            )
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "+৳ \${inc.amountPoisha / 100.0}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = IncomeGreen
+                            )
+                            IconButton(onClick = {
+                                coroutineScope.launch { repository.deleteIncome(inc) }
+                            }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MutedSlate.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+                            }
+                        }
+                    }
+                }
+            }
+
+            items(todayExpenses) { exp ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(
+                                    color = ExpenseRed.copy(alpha = 0.2f),
+                                    shape = RoundedCornerShape(4.dp)
+                                ) {
+                                    Text(
+                                        text = "ব্যয়",
+                                        color = ExpenseRed,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = exp.description,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                            }
+                            Text(
+                                text = "\${exp.time} · \${exp.vendorName}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MutedSlate
+                            )
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "-৳ \${exp.amountPoisha / 100.0}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = ExpenseRed
+                            )
+                            IconButton(onClick = {
+                                coroutineScope.launch { repository.deleteExpense(exp) }
+                            }) {
+                                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MutedSlate.copy(alpha = 0.6f), modifier = Modifier.size(18.dp))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+`,
+  },
+
+  // 20. Compose Screen: IncomeScreen.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/income/IncomeScreen.kt',
+    content: `package com.salam.sandi.ui.income
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.salam.sandi.data.entity.IncomeEntity
+import com.salam.sandi.data.repository.SandiRepository
+import com.salam.sandi.ui.components.AddIncomeDialog
+import com.salam.sandi.ui.theme.*
+import kotlinx.coroutines.launch
+
+@Composable
+fun IncomeScreen(repository: SandiRepository) {
+    val coroutineScope = rememberCoroutineScope()
+    val incomes by repository.allIncomes.collectAsState(initial = emptyList())
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    val totalIncomePoisha = incomes.sumOf { it.amountPoisha }
+
+    if (showAddDialog) {
+        AddIncomeDialog(
+            onDismiss = { showAddDialog = false },
+            onSave = { newIncome ->
+                coroutineScope.launch {
+                    repository.addIncome(newIncome)
+                    showAddDialog = false
+                }
+            }
+        )
+    }
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = IncomeGreen,
+                contentColor = ObsidianBlack
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Income")
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ObsidianBlack)
+                .padding(padding)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "আয় ট্র্যাকার ও ভাড়া হিসাব",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = IncomeGreen
+                        )
+                        Text(
+                            text = "সকল ট্রিপ ও যাত্রীর ভাড়ার বিস্তারিত খতিয়ান",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MutedSlate
+                        )
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(text = "সর্বমোট আয়", style = MaterialTheme.typography.labelSmall, color = MutedSlate)
+                            Text(
+                                text = "৳ \${totalIncomePoisha / 100.0}",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Black,
+                                color = IncomeGreen
+                            )
+                        }
+                        Surface(
+                            color = IncomeGreen.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(
+                                text = "\${incomes.size} টি এন্ট্রি",
+                                color = IncomeGreen,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (incomes.isEmpty()) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = CardNavy.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TrendingUp,
+                                contentDescription = null,
+                                tint = MutedSlate,
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "এখনো কোনো আয়ের হিসাব যোগ করা হয়নি",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MutedSlate
+                            )
+                            Text(
+                                text = "নিচের (+) বাটনে চাপ দিয়ে আপনার প্রথম ট্রিপ যোগ করুন",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MutedSlate.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                }
+            } else {
+                items(incomes) { item ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = CardNavy),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = item.tripDescription,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                                Text(
+                                    text = "৳ \${item.amountPoisha / 100.0}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Black,
+                                    color = IncomeGreen
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "\${item.date}  \${item.time}  ·  \${item.startLocation} ➔ \${item.destination}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MutedSlate
+                                )
+
+                                Surface(
+                                    color = if (item.paymentMethod == "BKASH") ProfitSky.copy(alpha = 0.2f) else GoldAccent.copy(alpha = 0.2f),
+                                    shape = RoundedCornerShape(6.dp)
+                                ) {
+                                    Text(
+                                        text = if (item.paymentMethod == "BKASH") "বিকাশ" else "নগদ",
+                                        color = if (item.paymentMethod == "BKASH") ProfitSky else GoldAccent,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            if (!item.customerName.isNullOrBlank()) {
+                                Text(
+                                    text = "যাত্রী: \${item.customerName}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MutedSlate
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                IconButton(onClick = {
+                                    coroutineScope.launch { repository.deleteIncome(item) }
+                                }) {
+                                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = ExpenseRed.copy(alpha = 0.7f), modifier = Modifier.size(18.dp))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(72.dp))
+            }
+        }
+    }
+}
+`,
+  },
+
+  // 21. Compose Screen: ExpenseScreen.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/expense/ExpenseScreen.kt',
+    content: `package com.salam.sandi.ui.expense
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.salam.sandi.data.entity.ExpenseEntity
+import com.salam.sandi.data.repository.SandiRepository
+import com.salam.sandi.ui.components.AddExpenseDialog
+import com.salam.sandi.ui.theme.*
+import kotlinx.coroutines.launch
+
+@Composable
+fun ExpenseScreen(repository: SandiRepository) {
+    val coroutineScope = rememberCoroutineScope()
+    val expenses by repository.allExpenses.collectAsState(initial = emptyList())
+    var showAddDialog by remember { mutableStateOf(false) }
+
+    val totalExpensePoisha = expenses.sumOf { it.amountPoisha }
+
+    if (showAddDialog) {
+        AddExpenseDialog(
+            onDismiss = { showAddDialog = false },
+            onSave = { newExpense ->
+                coroutineScope.launch {
+                    repository.addExpense(newExpense)
+                    showAddDialog = false
+                }
+            }
+        )
+    }
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showAddDialog = true },
+                containerColor = ExpenseRed,
+                contentColor = TextWhite
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Add Expense")
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ObsidianBlack)
+                .padding(padding)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "ব্যয় ট্র্যাকার ও খরচ হিসাব",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = ExpenseRed
+                        )
+                        Text(
+                            text = "চার্জিং, মেরামত, নাস্তা ও নিয়মিত মেইনটেন্যান্স বিল",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MutedSlate
+                        )
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = CardNavy),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(text = "সর্বমোট ব্যয়", style = MaterialTheme.typography.labelSmall, color = MutedSlate)
+                            Text(
+                                text = "৳ \${totalExpensePoisha / 100.0}",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Black,
+                                color = ExpenseRed
+                            )
+                        }
+                        Surface(
+                            color = ExpenseRed.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(
+                                text = "\${expenses.size} টি এন্ট্রি",
+                                color = ExpenseRed,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (expenses.isEmpty()) {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = CardNavy.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.TrendingDown,
+                                contentDescription = null,
+                                tint = MutedSlate,
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "এখনো কোনো ব্যয়ের হিসাব যোগ করা হয়নি",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MutedSlate
+                            )
+                            Text(
+                                text = "নিচের (+) বাটনে চাপ দিয়ে আপনার খরচের হিসাব যোগ করুন",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MutedSlate.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                }
+            } else {
+                items(expenses) { item ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = CardNavy),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = item.description,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                                Text(
+                                    text = "৳ \${item.amountPoisha / 100.0}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Black,
+                                    color = ExpenseRed
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "\${item.date}  \${item.time}  ·  \${item.vendorName}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MutedSlate
+                                )
+
+                                Surface(
+                                    color = ExpenseRed.copy(alpha = 0.15f),
+                                    shape = RoundedCornerShape(6.dp)
+                                ) {
+                                    Text(
+                                        text = when(item.category) {
+                                            "BATTERY_CHARGING" -> "চার্জিং বিল"
+                                            "PERSONAL_EXPENSE" -> "নাস্তা/চা"
+                                            "TIRE_TUBE" -> "টায়ার/টিউব"
+                                            "VEHICLE_REPAIR" -> "মেরামত"
+                                            else -> "অন্যান্য"
+                                        },
+                                        color = ExpenseRed,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                IconButton(onClick = {
+                                    coroutineScope.launch { repository.deleteExpense(item) }
+                                }) {
+                                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = ExpenseRed.copy(alpha = 0.7f), modifier = Modifier.size(18.dp))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(72.dp))
+            }
+        }
+    }
+}
+`,
+  },
+
+  // 22. Compose Screen: DailyVoucherScreen.kt (Both Income & Expense in 1 Voucher per day)
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/voucher/DailyVoucherScreen.kt',
+    content: `package com.salam.sandi.ui.voucher
+
+import android.content.Intent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.salam.sandi.data.entity.VoucherEntity
+import com.salam.sandi.data.repository.SandiRepository
+import com.salam.sandi.ui.theme.*
+import com.salam.sandi.utils.PdfGenerator
+import java.text.SimpleDateFormat
+import java.util.*
+
+@Composable
+fun DailyVoucherScreen(repository: SandiRepository) {
+    val context = LocalContext.current
+    val incomes by repository.allIncomes.collectAsState(initial = emptyList())
+    val expenses by repository.allExpenses.collectAsState(initial = emptyList())
+
+    val todayDate = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date()) }
+    val voucherNumber = remember { "SDI-" + todayDate.replace("-", "") }
+
+    val dayIncomes = incomes.filter { it.date == todayDate }
+    val dayExpenses = expenses.filter { it.date == todayDate }
+
+    val totalIncomePoisha = dayIncomes.sumOf { it.amountPoisha }
+    val totalExpensePoisha = dayExpenses.sumOf { it.amountPoisha }
+    val netProfitPoisha = totalIncomePoisha - totalExpensePoisha
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ObsidianBlack)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item {
+            Column {
+                Text(
+                    text = "সারাদিনের দৈনিক সম্মিলিত ভাউচার",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = GoldAccent
+                )
+                Text(
+                    text = "১টি ভাউচারেই সারাদিনের মোট আয় ও ব্যয় হিসাব (৩০ দিনে ৩০টি ভাউচার)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MutedSlate
+                )
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy),
+                shape = RoundedCornerShape(20.dp),
+                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(GoldAccent.copy(alpha = 0.4f)))
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column {
+                            Text(
+                                text = "SANDI AUTO EASY BIKE",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Black,
+                                color = GoldAccent,
+                                letterSpacing = 1.sp
+                            )
+                            Text(
+                                text = "কোম্পানি: Sandi · মালিক: আব্দুছ ছালাম (০১৬২০২৩০৮৬৪)",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MutedSlate
+                            )
+                            Text(
+                                text = "গাড়ি: SANDI Passenger Electric Easy Bike (কুমিল্লা-থ-১১-৪৫০২)",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MutedSlate.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+
+                    Surface(
+                        color = ObsidianBlack.copy(alpha = 0.7f),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(text = "ভাউচার নং: \${voucherNumber}", color = GoldAccent, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                            Text(text = "তারিখ: \${todayDate}", color = TextWhite, style = MaterialTheme.typography.labelMedium)
+                        }
+                    }
+
+                    Divider(color = MutedSlate.copy(alpha = 0.2f), thickness = 1.dp)
+
+                    Text(
+                        text = "সারাদিনের আয় বিবরণী (\${dayIncomes.size} টি এন্ট্রি):",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = IncomeGreen
+                    )
+
+                    if (dayIncomes.isEmpty()) {
+                        Text(text = "• আজকে এখনো কোনো আয়ের এন্ট্রি নেই", color = MutedSlate, style = MaterialTheme.typography.bodySmall)
+                    } else {
+                        dayIncomes.forEach { inc ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "• \${inc.tripDescription}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TextWhite,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Text(
+                                    text = "৳ \${inc.amountPoisha / 100.0}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = IncomeGreen
+                                )
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "সারাদিনের মোট আয়:", fontWeight = FontWeight.Bold, color = IncomeGreen)
+                        Text(text = "৳ \${totalIncomePoisha / 100.0}", fontWeight = FontWeight.Black, color = IncomeGreen)
+                    }
+
+                    Divider(color = MutedSlate.copy(alpha = 0.2f), thickness = 1.dp)
+
+                    Text(
+                        text = "সারাদিনের ব্যয় বিবরণী (\${dayExpenses.size} টি এন্ট্রি):",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = ExpenseRed
+                    )
+
+                    if (dayExpenses.isEmpty()) {
+                        Text(text = "• আজকে এখনো কোনো ব্যয়ের এন্ট্রি নেই", color = MutedSlate, style = MaterialTheme.typography.bodySmall)
+                    } else {
+                        dayExpenses.forEach { exp ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "• \${exp.description}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TextWhite,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Text(
+                                    text = "৳ \${exp.amountPoisha / 100.0}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ExpenseRed
+                                )
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "সারাদিনের মোট ব্যয়:", fontWeight = FontWeight.Bold, color = ExpenseRed)
+                        Text(text = "৳ \${totalExpensePoisha / 100.0}", fontWeight = FontWeight.Black, color = ExpenseRed)
+                    }
+
+                    Divider(color = GoldAccent.copy(alpha = 0.3f), thickness = 1.dp)
+
+                    Surface(
+                        color = ObsidianBlack,
+                        shape = RoundedCornerShape(12.dp),
+                        border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(GoldAccent.copy(alpha = 0.5f)))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(text = "সারাদিনের নিট লাভ / হাতে জমা", style = MaterialTheme.typography.labelSmall, color = MutedSlate)
+                                Text(
+                                    text = "৳ \${netProfitPoisha / 100.0}",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Black,
+                                    color = if (netProfitPoisha >= 0) GoldAccent else ExpenseRed
+                                )
+                            }
+
+                            Surface(
+                                color = GoldAccent.copy(alpha = 0.15f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = "আজকের ক্যাশ",
+                                    color = GoldAccent,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        Text(
+                            text = "Salam",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontFamily = FontFamily.Cursive,
+                            fontWeight = FontWeight.Bold,
+                            color = ProfitSky
+                        )
+                        Divider(modifier = Modifier.width(160.dp), color = MutedSlate.copy(alpha = 0.4f), thickness = 1.dp)
+                        Text(
+                            text = "স্বত্বাধিকারীর স্বাক্ষর: আব্দুছ ছালাম",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MutedSlate
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            val dummyVoucher = VoucherEntity(
+                                date = todayDate,
+                                voucherNumber = voucherNumber,
+                                totalIncomePoisha = totalIncomePoisha,
+                                totalExpensePoisha = totalExpensePoisha,
+                                netProfitPoisha = netProfitPoisha,
+                                generatedTime = "Daily",
+                                snapshotJson = "{}"
+                            )
+                            try {
+                                val pdfFile = PdfGenerator.generateDailyVoucherPdf(context, dummyVoucher, false)
+                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, "SANDI ভাউচার: \${voucherNumber}")
+                                    putExtra(Intent.EXTRA_TEXT, "SANDI AUTO EASY BIKE\\nভাউচার: \${voucherNumber}\\nতারিখ: \${todayDate}\\nমোট আয়: ৳ \${totalIncomePoisha / 100.0}\\nমোট ব্যয়: ৳ \${totalExpensePoisha / 100.0}\\nনিট লাভ: ৳ \${netProfitPoisha / 100.0}\\nমালিক: আব্দুছ ছালাম")
+                                }
+                                context.startActivity(Intent.createChooser(shareIntent, "ভাউচার শেয়ার করুন"))
+                            } catch (e: Exception) {
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, "SANDI AUTO EASY BIKE - ভাউচার: \${voucherNumber}\\nমোট আয়: ৳ \${totalIncomePoisha / 100.0}\\nমোট ব্যয়: ৳ \${totalExpensePoisha / 100.0}\\nনিট লাভ: ৳ \${netProfitPoisha / 100.0}")
+                                    type = "text/plain"
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, "ভাউচার শেয়ার করুন"))
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = GoldAccent),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = null, tint = ObsidianBlack, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "ভাউচার কপি / শেয়ার করুন", color = ObsidianBlack, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+`,
+  },
+
+  // 23. Compose Screen: MoreScreen.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/more/MoreScreen.kt',
+    content: `package com.salam.sandi.ui.more
+
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.salam.sandi.data.repository.SandiRepository
+import com.salam.sandi.ui.theme.*
+import kotlinx.coroutines.launch
+
+@Composable
+fun MoreScreen(repository: SandiRepository) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    var showConfirmClearDialog by remember { mutableStateOf(false) }
+
+    if (showConfirmClearDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmClearDialog = false },
+            title = {
+                Text(
+                    text = "সকল হিসাব মুছে ফেলবেন?",
+                    color = ExpenseRed,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "আপনি কি নিশ্চিত সকল আয়, ব্যয় ও ভাউচারের হিসাব সম্পূর্ণ মুছে ব্যালেন্স ০ করতে চান? আপনার নতুন হিসাব নিজে এন্ট্রি দেওয়ার জন্য খাতা খালি হবে।",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            repository.clearAllData()
+                            showConfirmClearDialog = false
+                            Toast.makeText(context, "সকল হিসাব মুছে ০ ব্যালেন্স করা হয়েছে", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = ExpenseRed)
+                ) {
+                    Text("হ্যাঁ, সব মুছুন", color = TextWhite, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmClearDialog = false }) {
+                    Text("না, রাখুন", color = MutedSlate)
+                }
+            }
+        )
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ObsidianBlack)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        item {
+            Column {
+                Text(
+                    text = "গাড়ি ও স্বত্বাধিকারীর তথ্য",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = GoldAccent
+                )
+                Text(
+                    text = "ব্যক্তিগত অটো ইজি বাইক প্রোফাইল, ব্যাটারি ও সার্ভিস ট্র্যাকার",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MutedSlate
+                )
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Person, contentDescription = null, tint = GoldAccent)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "স্বত্বাধিকারী: আব্দুছ ছালাম",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = TextWhite
+                        )
+                    }
+
+                    Text(text = "মোবাইল ১: ০১৬২০২৩০৮৬৪", style = MaterialTheme.typography.bodyMedium, color = TextWhite)
+                    Text(text = "মোবাইল ২: ০১৬৩২৩৩১৮৬৪", style = MaterialTheme.typography.bodyMedium, color = TextWhite)
+                    Text(text = "ইমেইল: salam230864@gmail.com", style = MaterialTheme.typography.bodySmall, color = MutedSlate)
+                    Text(text = "ঠিকানা: গ্রাম: ফলকামুড়ী, ডাকঘর: আমড়াতলী বাজার, থানা: বরুড়া, জেলা: কুমিল্লা।", style = MaterialTheme.typography.bodySmall, color = MutedSlate)
+                }
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.DirectionsCar, contentDescription = null, tint = ProfitSky)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "যানবাহন স্পেসিফিকেশন",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = TextWhite
+                        )
+                    }
+
+                    Text(text = "ব্র্যান্ড ও প্রস্তুতকারক: Sandi (Sandi Company)", style = MaterialTheme.typography.bodyMedium, color = TextWhite)
+                    Text(text = "মডেল: SANDI Passenger Electric Easy Bike", style = MaterialTheme.typography.bodySmall, color = MutedSlate)
+                    Text(text = "রেজিস্ট্রেশন নম্বর: কুমিল্লা-থ-১১-৪৫০২", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = GoldAccent)
+                    Text(text = "ব্যাটারি: 60V 130Ah Tubular Deep Cycle (5 x 12V 130Ah)", style = MaterialTheme.typography.bodySmall, color = MutedSlate)
+                    Text(text = "মোটর: 1200W High Torque BLDC Differential", style = MaterialTheme.typography.bodySmall, color = MutedSlate)
+                }
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy),
+                shape = RoundedCornerShape(16.dp),
+                border = CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ExpenseRed.copy(alpha = 0.4f)))
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "ডাটা রিসেট ও ফ্রেশ খাতা",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = ExpenseRed
+                    )
+                    Text(
+                        text = "সকল আয়-ব্যয় মুছে নতুন করে নিজের আসল হিসাব এন্ট্রি দিতে চাইলে নিচের বাটনে চাপ দিন।",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MutedSlate
+                    )
+
+                    Button(
+                        onClick = { showConfirmClearDialog = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = ExpenseRed.copy(alpha = 0.85f)),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = null, tint = TextWhite)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "সকল লেনদেন মুছে ০ ব্যালেন্স করুন",
+                            color = TextWhite,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = CardNavy.copy(alpha = 0.6f)),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.Shield, contentDescription = null, tint = IncomeGreen)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "১০০% অফলাইন নিশ্চয়তা",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = IncomeGreen
+                        )
+                    }
+                    Text(
+                        text = "এই অ্যাপটি ইন্টারনেট ছাড়া বিমান মোডেও সম্পূর্ণ সক্রিয় থাকে। আপনার সমস্ত আর্থিক তথ্য আপনার ডিভাইসের অফলাইন SQLite ডাটাবেজে সুরক্ষিত আছে।",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MutedSlate
+                    )
+                    Text(
+                        text = "সংস্করণ: ১.০.০ · প্যাকেজ: com.salam.sandi",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MutedSlate.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+`,
+  },
+
+  // 24. Compose Dialog: AddIncomeDialog.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/components/AddIncomeDialog.kt',
+    content: `package com.salam.sandi.ui.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import com.salam.sandi.data.entity.IncomeEntity
+import com.salam.sandi.ui.theme.*
+import java.text.SimpleDateFormat
+import java.util.*
+
+@Composable
+fun AddIncomeDialog(
+    onDismiss: () -> Unit,
+    onSave: (IncomeEntity) -> Unit
+) {
+    var amountText by remember { mutableStateOf("") }
+    var tripDesc by remember { mutableStateOf("") }
+    var startLoc by remember { mutableStateOf("ফলকামুড়ী") }
+    var destLoc by remember { mutableStateOf("বরুড়া বাজার") }
+    var customerName by remember { mutableStateOf("") }
+    var isBkash by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "নতুন যাত্রীভাড়া / আয় যোগ করুন",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = IncomeGreen
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                OutlinedTextField(
+                    value = amountText,
+                    onValueChange = { 
+                        amountText = it
+                        errorMessage = ""
+                    },
+                    label = { Text("ভাড়ার পরিমাণ (টাকা / ৳)") },
+                    placeholder = { Text("যেমন: ৮৫০") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+
+                OutlinedTextField(
+                    value = tripDesc,
+                    onValueChange = { tripDesc = it },
+                    label = { Text("ট্রিপের বিবরণ") },
+                    placeholder = { Text("যেমন: সকালের লোকাল ট্রিপ") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = startLoc,
+                        onValueChange = { startLoc = it },
+                        label = { Text("শুরুর স্থান") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = destLoc,
+                        onValueChange = { destLoc = it },
+                        label = { Text("গন্তব্য") },
+                        modifier = Modifier.weight(1f),
+                        singleLine = true
+                    )
+                }
+
+                OutlinedTextField(
+                    value = customerName,
+                    onValueChange = { customerName = it },
+                    label = { Text("যাত্রী / কাস্টমারের নাম (অপশনাল)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text("পেমেন্ট পদ্ধতি:", style = MaterialTheme.typography.bodyMedium)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = !isBkash,
+                            onClick = { isBkash = false }
+                        )
+                        Text("নগদ ক্যাশ", style = MaterialTheme.typography.bodySmall)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        RadioButton(
+                            selected = isBkash,
+                            onClick = { isBkash = true }
+                        )
+                        Text("বিকাশ", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = ExpenseRed,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val amountNum = amountText.toDoubleOrNull()
+                    if (amountNum == null || amountNum <= 0) {
+                        errorMessage = "সঠিক টাকার পরিমাণ লিখুন"
+                        return@Button
+                    }
+                    val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                    val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                    val finalDesc = if (tripDesc.isNotBlank()) tripDesc else "\$startLoc টু \$destLoc"
+
+                    val entity = IncomeEntity(
+                        id = "inc-\${System.currentTimeMillis()}",
+                        amountPoisha = (amountNum * 100).toLong(),
+                        date = todayDate,
+                        time = currentTime,
+                        category = if (isBkash) "RESERVED_TRIP" else "PASSENGER_FARE",
+                        tripDescription = finalDesc,
+                        customerName = customerName.ifBlank { null },
+                        startLocation = startLoc,
+                        destination = destLoc,
+                        paymentMethod = if (isBkash) "BKASH" else "CASH"
+                    )
+                    onSave(entity)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = IncomeGreen)
+            ) {
+                Text("সংরক্ষণ করুন", color = ObsidianBlack, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("বাতিল", color = MutedSlate)
+            }
+        }
+    )
+}
+`,
+  },
+
+  // 25. Compose Dialog: AddExpenseDialog.kt
+  {
+    path: 'app/src/main/java/com/salam/sandi/ui/components/AddExpenseDialog.kt',
+    content: `package com.salam.sandi.ui.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import com.salam.sandi.data.entity.ExpenseEntity
+import com.salam.sandi.ui.theme.*
+import java.text.SimpleDateFormat
+import java.util.*
+
+@Composable
+fun AddExpenseDialog(
+    onDismiss: () -> Unit,
+    onSave: (ExpenseEntity) -> Unit
+) {
+    var amountText by remember { mutableStateOf("") }
+    var descText by remember { mutableStateOf("") }
+    var vendorText by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("BATTERY_CHARGING") }
+    var errorMessage by remember { mutableStateOf("") }
+
+    val categories = listOf(
+        "BATTERY_CHARGING" to "🔋 ব্যাটারি ফুল চার্জিং বিল",
+        "PERSONAL_EXPENSE" to "☕ নাস্তা ও ব্যক্তিগত খরচ",
+        "TIRE_TUBE" to "⚙️ টায়ার, টিউব ও পাংচার",
+        "VEHICLE_REPAIR" to "🔧 সার্ভিসিং ও পার্টস",
+        "OTHER" to "📝 অন্যান্য খরচ"
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "নতুন ব্যয় / খরচ যোগ করুন",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = ExpenseRed
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                OutlinedTextField(
+                    value = amountText,
+                    onValueChange = { 
+                        amountText = it
+                        errorMessage = ""
+                    },
+                    label = { Text("খরচের পরিমাণ (টাকা / ৳)") },
+                    placeholder = { Text("যেমন: ১৪০") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+
+                Text("খরচের খাত নির্বাচন করুন:", style = MaterialTheme.typography.bodySmall, color = MutedSlate)
+
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    categories.forEach { (catKey, label) ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedCategory == catKey,
+                                onClick = { 
+                                    selectedCategory = catKey
+                                    if (descText.isBlank()) {
+                                        descText = label.substringAfter(" ")
+                                    }
+                                }
+                            )
+                            Text(label, style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = descText,
+                    onValueChange = { descText = it },
+                    label = { Text("খরচের বিস্তারিত বিবরণ") },
+                    placeholder = { Text("যেমন: রাত্রিকালীন চার্জিং বিল") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+
+                OutlinedTextField(
+                    value = vendorText,
+                    onValueChange = { vendorText = it },
+                    label = { Text("দোকান / গ্যারেজের নাম (অপশনাল)") },
+                    placeholder = { Text("যেমন: আমড়াতলী গ্যারেজ") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = ExpenseRed,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val amountNum = amountText.toDoubleOrNull()
+                    if (amountNum == null || amountNum <= 0) {
+                        errorMessage = "সঠিক টাকার পরিমাণ লিখুন"
+                        return@Button
+                    }
+                    val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                    val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                    val finalDesc = if (descText.isNotBlank()) descText else "সাধারণ খরচ"
+
+                    val entity = ExpenseEntity(
+                        id = "exp-\${System.currentTimeMillis()}",
+                        amountPoisha = (amountNum * 100).toLong(),
+                        date = todayDate,
+                        time = currentTime,
+                        category = selectedCategory,
+                        description = finalDesc,
+                        vendorName = vendorText.ifBlank { "নগদ খরচ" },
+                        paymentMethod = "CASH"
+                    )
+                    onSave(entity)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = ExpenseRed)
+            ) {
+                Text("সংরক্ষণ করুন", color = TextWhite, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("বাতিল", color = MutedSlate)
+            }
+        }
+    )
+}
+`,
+  },
+
+  // 21. Room Entities: IncomeEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/IncomeEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -444,14 +2731,14 @@ data class IncomeEntity(
     val startLocation: String,
     val destination: String,
     val distanceKm: Double? = null,
-    val paymentMethod: String, // CASH, BKASH, NAGAD, etc.
+    val paymentMethod: String,
     val notes: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 )
 `,
   },
 
-  // 14. ExpenseEntity.kt
+  // 22. ExpenseEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/ExpenseEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -477,7 +2764,7 @@ data class ExpenseEntity(
 `,
   },
 
-  // 15. VoucherEntity.kt
+  // 23. DailyVoucherEntity.kt (Consolidated Daily Voucher Entity)
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/VoucherEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -485,27 +2772,22 @@ data class ExpenseEntity(
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "vouchers")
+@Entity(tableName = "daily_vouchers")
 data class VoucherEntity(
     @PrimaryKey
-    val voucherNumber: String, // SDI-2026-000001
-    val type: String,          // INCOME or EXPENSE
-    val transactionId: String,
-    val amountPoisha: Long,
-    val date: String,
-    val time: String,
-    val category: String,
-    val description: String,
-    val paymentMethod: String,
-    val location: String,
-    val ownerSnapshotJson: String,
-    val vehicleSnapshotJson: String,
+    val date: String, // YYYY-MM-DD (1 voucher per day)
+    val voucherNumber: String, // SDI-20261030
+    val totalIncomePoisha: Long,
+    val totalExpensePoisha: Long,
+    val netProfitPoisha: Long,
+    val generatedTime: String,
+    val snapshotJson: String,
     val createdAt: Long = System.currentTimeMillis()
 )
 `,
   },
 
-  // 16. BatteryEntity.kt & MaintenanceEntity.kt
+  // 24. BatteryEntity.kt & MaintenanceEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/BatteryEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -552,7 +2834,7 @@ data class MaintenanceEntity(
 `,
   },
 
-  // 17. VehicleEntity.kt & SettingsEntity.kt
+  // 25. VehicleEntity.kt (Strictly Sandi Company)
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/VehicleEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -565,7 +2847,7 @@ data class VehicleEntity(
     @PrimaryKey
     val id: Int = 1,
     val name: String = "SANDI",
-    val manufacturer: String = "HUAIHAI / ZONGSHEN",
+    val manufacturer: String = "Sandi", // Strictly Sandi Company
     val model: String = "SANDI Passenger Electric Easy Bike",
     val registrationNumber: String = "কুমিল্লা-থ-১১-৪৫০২",
     val purchaseDate: String = "2025-03-15",
@@ -579,6 +2861,7 @@ data class VehicleEntity(
 `,
   },
 
+  // 26. SettingsEntity.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/entity/SettingsEntity.kt',
     content: `package com.salam.sandi.data.entity
@@ -606,7 +2889,7 @@ data class SettingsEntity(
 `,
   },
 
-  // 18. DAOs: IncomeDao.kt & ExpenseDao.kt
+  // 27. DAOs: IncomeDao.kt & ExpenseDao.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/dao/IncomeDao.kt',
     content: `package com.salam.sandi.data.dao
@@ -623,15 +2906,6 @@ interface IncomeDao {
     @Query("SELECT * FROM incomes WHERE date = :date ORDER BY time DESC")
     fun getIncomesByDate(date: String): Flow<List<IncomeEntity>>
 
-    @Query("SELECT SUM(amountPoisha) FROM incomes WHERE date = :date")
-    fun getTodayIncomeSum(date: String): Flow<Long?>
-
-    @Query("SELECT SUM(amountPoisha) FROM incomes WHERE date LIKE :monthPrefix || '%'")
-    fun getMonthlyIncomeSum(monthPrefix: String): Flow<Long?>
-
-    @Query("SELECT SUM(amountPoisha) FROM incomes")
-    fun getTotalIncomeSum(): Flow<Long?>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertIncome(income: IncomeEntity)
 
@@ -640,6 +2914,9 @@ interface IncomeDao {
 
     @Delete
     suspend fun deleteIncome(income: IncomeEntity)
+
+    @Query("DELETE FROM incomes")
+    suspend fun clearAllIncomes()
 }
 `,
   },
@@ -660,15 +2937,6 @@ interface ExpenseDao {
     @Query("SELECT * FROM expenses WHERE date = :date ORDER BY time DESC")
     fun getExpensesByDate(date: String): Flow<List<ExpenseEntity>>
 
-    @Query("SELECT SUM(amountPoisha) FROM expenses WHERE date = :date")
-    fun getTodayExpenseSum(date: String): Flow<Long?>
-
-    @Query("SELECT SUM(amountPoisha) FROM expenses WHERE date LIKE :monthPrefix || '%'")
-    fun getMonthlyExpenseSum(monthPrefix: String): Flow<Long?>
-
-    @Query("SELECT SUM(amountPoisha) FROM expenses")
-    fun getTotalExpenseSum(): Flow<Long?>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExpense(expense: ExpenseEntity)
 
@@ -677,11 +2945,14 @@ interface ExpenseDao {
 
     @Delete
     suspend fun deleteExpense(expense: ExpenseEntity)
+
+    @Query("DELETE FROM expenses")
+    suspend fun clearAllExpenses()
 }
 `,
   },
 
-  // 19. SandiDatabase.kt
+  // 28. SandiDatabase.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/database/SandiDatabase.kt',
     content: `package com.salam.sandi.data.database
@@ -735,7 +3006,7 @@ abstract class SandiDatabase : RoomDatabase() {
 `,
   },
 
-  // 20. Other DAOs
+  // 29. Other DAOs
   {
     path: 'app/src/main/java/com/salam/sandi/data/dao/OtherDaos.kt',
     content: `package com.salam.sandi.data.dao
@@ -755,14 +3026,14 @@ interface VehicleDao {
 
 @Dao
 interface VoucherDao {
-    @Query("SELECT * FROM vouchers ORDER BY createdAt DESC")
+    @Query("SELECT * FROM daily_vouchers ORDER BY date DESC")
     fun getAllVouchers(): Flow<List<VoucherEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVoucher(voucher: VoucherEntity)
 
-    @Query("SELECT COUNT(*) FROM vouchers")
-    suspend fun getVoucherCount(): Int
+    @Query("DELETE FROM daily_vouchers")
+    suspend fun clearAllVouchers()
 }
 
 @Dao
@@ -772,6 +3043,9 @@ interface BatteryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBatteryRecord(record: BatteryEntity)
+
+    @Query("DELETE FROM battery_records")
+    suspend fun clearAllBatteryRecords()
 }
 
 @Dao
@@ -781,6 +3055,9 @@ interface MaintenanceDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMaintenanceRecord(record: MaintenanceEntity)
+
+    @Query("DELETE FROM maintenance_records")
+    suspend fun clearAllMaintenanceRecords()
 }
 
 @Dao
@@ -794,7 +3071,7 @@ interface SettingsDao {
 `,
   },
 
-  // 21. SandiRepository.kt
+  // 30. SandiRepository.kt
   {
     path: 'app/src/main/java/com/salam/sandi/data/repository/SandiRepository.kt',
     content: `package com.salam.sandi.data.repository
@@ -825,11 +3102,19 @@ class SandiRepository(
     suspend fun deleteExpense(expense: ExpenseEntity) = expenseDao.deleteExpense(expense)
 
     suspend fun addVoucher(voucher: VoucherEntity) = voucherDao.insertVoucher(voucher)
+
+    suspend fun clearAllData() {
+        incomeDao.clearAllIncomes()
+        expenseDao.clearAllExpenses()
+        voucherDao.clearAllVouchers()
+        batteryDao.clearAllBatteryRecords()
+        maintenanceDao.clearAllMaintenanceRecords()
+    }
 }
 `,
   },
 
-  // 22. PDF Generator (PdfGenerator.kt)
+  // 31. PDF Generator (PdfGenerator.kt - Both Income & Expense in 1 Voucher)
   {
     path: 'app/src/main/java/com/salam/sandi/utils/PdfGenerator.kt',
     content: `package com.salam.sandi.utils
@@ -845,60 +3130,56 @@ import java.io.File
 import java.io.FileOutputStream
 
 object PdfGenerator {
-    fun generateVoucherPdf(context: Context, voucher: VoucherEntity, isSlipFormat: Boolean): File {
+    fun generateDailyVoucherPdf(context: Context, voucher: VoucherEntity, isSlipFormat: Boolean): File {
         val pdfDocument = PdfDocument()
         val width = if (isSlipFormat) 250 else 595
-        val height = if (isSlipFormat) 400 else 842
+        val height = if (isSlipFormat) 500 else 842
         val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
         val page = pdfDocument.startPage(pageInfo)
         val canvas: Canvas = page.canvas
         val paint = Paint()
 
-        // Background
         paint.color = Color.WHITE
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), paint)
 
-        // Header Title
-        paint.color = Color.rgb(15, 23, 42) // Dark Navy
+        // Header
+        paint.color = Color.rgb(11, 19, 41)
         paint.textSize = if (isSlipFormat) 14f else 22f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         canvas.drawText("SANDI AUTO EASY BIKE", 20f, 40f, paint)
 
         paint.textSize = if (isSlipFormat) 9f else 12f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        canvas.drawText("Owner: Abdus Salam | Phone: 01620230864", 20f, 60f, paint)
-        canvas.drawText("Voucher No: " + voucher.voucherNumber, 20f, 80f, paint)
-        canvas.drawText("Date: " + voucher.date + " " + voucher.time, 20f, 95f, paint)
+        canvas.drawText("Company: Sandi | Owner: Abdus Salam (01620230864)", 20f, 60f, paint)
+        canvas.drawText("Daily Voucher: " + voucher.voucherNumber + " | Date: " + voucher.date, 20f, 80f, paint)
 
-        // Line
+        // Divider
         paint.strokeWidth = 1f
         paint.color = Color.LTGRAY
-        canvas.drawLine(20f, 105f, (width - 20).toFloat(), 105f, paint)
+        canvas.drawLine(20f, 95f, (width - 20).toFloat(), 95f, paint)
 
-        // Details
+        // Summary
         paint.color = Color.BLACK
         paint.textSize = if (isSlipFormat) 10f else 14f
-        canvas.drawText("Type: " + voucher.type, 20f, 130f, paint)
-        canvas.drawText("Category: " + voucher.category, 20f, 150f, paint)
-        canvas.drawText("Description: " + voucher.description, 20f, 170f, paint)
-        canvas.drawText("Payment Method: " + voucher.paymentMethod, 20f, 190f, paint)
+        canvas.drawText("Total Day Income: BDT " + (voucher.totalIncomePoisha / 100.0), 20f, 125f, paint)
+        canvas.drawText("Total Day Expense: BDT " + (voucher.totalExpensePoisha / 100.0), 20f, 150f, paint)
 
-        // Amount Box
-        paint.color = Color.rgb(217, 119, 6) // Gold accent
-        paint.textSize = if (isSlipFormat) 14f else 20f
+        // Net Profit
+        paint.color = Color.rgb(245, 158, 11)
+        paint.textSize = if (isSlipFormat) 13f else 18f
         paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        val taka = voucher.amountPoisha / 100.0
-        canvas.drawText("Total: BDT " + taka + " Taka", 20f, 230f, paint)
+        canvas.drawText("Net Profit / Cash: BDT " + (voucher.netProfitPoisha / 100.0), 20f, 190f, paint)
 
-        // Footer Thank you
+        // Signature
         paint.color = Color.DKGRAY
-        paint.textSize = if (isSlipFormat) 8f else 10f
-        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-        canvas.drawText("Thank you for using SANDI Auto Easy Bike!", 20f, 270f, paint)
+        paint.textSize = if (isSlipFormat) 9f else 11f
+        paint.typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        canvas.drawText("Proprietor Signature: Abdus Salam", 20f, 230f, paint)
+        canvas.drawText("Thank you for choosing SANDI Auto Easy Bike!", 20f, 260f, paint)
 
         pdfDocument.finishPage(page)
 
-        val outputFile = File(context.cacheDir, "voucher_" + voucher.voucherNumber + ".pdf")
+        val outputFile = File(context.cacheDir, "daily_voucher_" + voucher.voucherNumber + ".pdf")
         val outputStream = FileOutputStream(outputFile)
         pdfDocument.writeTo(outputStream)
         pdfDocument.close()
@@ -910,69 +3191,49 @@ object PdfGenerator {
 `,
   },
 
-  // 23. Bengali README.md
+  // 32. Bengali README.md
   {
     path: 'README.md',
     content: `# SANDI ডেইলি হিসাব (SANDI Daily Hisab)
 ### পার্সোনাল অটো ইজি বাইক ম্যানেজার (Personal Auto Easy Bike Manager)
 **স্বত্বাধিকারী:** আব্দুছ ছালাম | **মোবাইল:** ০১৬২০২৩০৮৬৪, ০১৬৩২৩৩১৮৬৪ | **ঠিকানা:** ফলকামুড়ী, আমড়াতলী বাজার, বরুড়া, কুমিল্লা।  
-**যানবাহন:** HUAIHAI / ZONGSHEN - SANDI Passenger Electric Easy Bike  
+**কোম্পানি:** Sandi | **যানবাহন:** SANDI Passenger Electric Easy Bike  
 **অ্যাপ আইডি:** \`com.salam.sandi\` | **মোড:** ১০০% অফলাইন ও ব্যক্তিগত (Zero Internet, Zero Cloud)
 
 ---
 
-## ১. প্রজেক্ট পরিচিতি
-এই অ্যাপ্লিকেশনটি সম্পূর্ণ ব্যক্তিগত ব্যবহারের জন্য তৈরি একটি হাই-পারফরম্যান্স নেটিভ অ্যান্ড্রয়েড ও ওয়েব হিসাব অ্যাপ্লিকেশন। এটি কোনো অনলাইন ক্লাউড বা থার্ড-পার্টি সার্ভারে কোনো আর্থিক ডাটা পাঠায় না। সম্পূর্ণ হিসাব, ভাউচার ও ব্যাটারি হিস্ট্রি আপনার ফোনের লোকাল মেমোরিতে (Room SQLite Database) সুরক্ষিত থাকে।
+## ১. প্রজেক্ট পরিচিতি ও বিশেষ ফিচারসমূহ
+এই অ্যাপ্লিকেশনটি জনাব আব্দুছ ছালামের ব্যক্তিগত ইজি বাইক পরিচালনার জন্য তৈরি একটি স্বয়ংসম্পূর্ণ অফলাইন হিসাব ও ভাউচার সিস্টেম।
 
-### প্রধান ফিচারসমূহ:
-1. **ড্যাশবোর্ড:** আজকের আয়, আজকের ব্যয়, নিট লাভ, মাসিক আয়-ব্যয় এবং রিয়েল-টাইম গ্রাফ।
-2. **পয়সা ক্যালকুলেশন:** কোনো প্রকার ফ্লোটিং পয়েন্ট হিসাবের ত্রুটি ছাড়া নিখুঁত পূর্ণসংখ্যায় (Integer Poisha) হিসাব সংরক্ষণ।
-3. **সুপারমার্কেট ভাউচার ইঞ্জিন:** ইউনিক নম্বরযুক্ত (\`SDI-2026-000001\`) প্রফেশনাল A4 ইনভয়েস ও থার্মাল POS স্লিপ ভাউচার জেনারেটর, সাথে আসল গাড়ির ছবি, মালিকের ছবি এবং মালিকের স্বাক্ষর।
-4. **ব্যাটারি ও চার্জিং ট্র্যাকার:** দৈনিক চার্জিং খরচ, বিদ্যুৎ ইউনিট ও মাসিক চার্জিং ব্যয়ের পূর্ণাঙ্গ সামারি।
-5. **রক্ষণাবেক্ষণ ও সার্ভিসিং:** গাড়ির যন্ত্রাংশ পরিবর্তন, ওয়ার্কশপ হিস্ট্রি এবং পরবর্তী সার্ভিসের অ্যালার্ম।
-6. **রিপোর্টস:** দৈনিক, সাপ্তাহিক, মাসিক ও কাস্টম ডেট রেঞ্জের ব্যালেন্স শিট, CSV এক্সেল ও PDF এক্সপোর্ট।
-7. **ব্যক্তিগত নিরাপত্তা:** ৪-ডিজিটের সল্টেড হ্যাশ পিন (PIN) লক।
-8. **লোকাল ব্যাকআপ ও রিস্টোর:** অফলাইন JSON ফাইল আকারে ব্যাকআপ সংরক্ষণ ও রিস্টোর।
+1. **সারাদিনের ১টি মাস্টার ভাউচার (৩০ দিনে ৩০টি ভাউচার):**
+   - সারাদিনে যতগুলো আয় (ভাড়া/ট্রিপ) এবং ব্যয় (চার্জিং, নাস্তা, পার্টস) হবে, সবগুলো একসাথে স্বয়ংক্রিয়ভাবে সারাদিনের একটিমাত্র সমন্বিত দৈনিক ভাউচারে লিপিবদ্ধ হবে।
+   - ভাউচারে সারাদিনের মোট আয়, সারাদিনের মোট ব্যয় এবং সারাদিনের নিট লাভ / হাতে জমা এক নজরে প্রদর্শিত হবে।
+2. **ব্যাকগ্রাউন্ড মুক্ত আসল স্বাক্ষর:**
+   - ভাউচারে কোনো কাগজের ব্যাকগ্রাউন্ড ছাড়াই স্বত্বাধিকারী আব্দুছ ছালামের আসল মসৃণ ডিজিটাল স্বাক্ষর যুক্ত থাকে।
+3. **প্রস্তুতকারক:**
+   - গাড়িটি সম্পূর্ণভাবে **Sandi Company**-র ব্রান্ড ও মডেল।
+4. **১০০% অফলাইন নিরাপত্তা:**
+   - কোনো ইন্টারনেট বা ক্লাউড সংযোগের প্রয়োজন নেই। ডাটা সম্পূর্ণভাবে ফোনের লোকাল মেমোরিতে (Room SQLite) সংরক্ষিত থাকে।
 
 ---
 
-## ২. মোবাইল থেকে গিটহাব অ্যাকশনস দিয়ে APK তৈরি করার সহজ নিয়ম
-আপনার কম্পিউটার বা অ্যান্ড্রয়েড স্টুডিও প্রয়োজন নেই। কেবল আপনার মোবাইল ফোন ব্যবহার করেই গিটহাব থেকে সরাসরি অফিশিয়াল \`.apk\` ফাইল তৈরি করে নিতে পারবেন:
+## ২. মোবাইল থেকে গিটহাব অ্যাকশনস দিয়ে APK তৈরি করার সহজ ৪ ধাপ
 
-### ধাপ ১: গিটহাবে নতুন রিপোজিটরি তৈরি করুন
-1. আপনার ফোনের ব্রাউজারে [github.com](https://github.com) এ লগইন করুন।
-2. **New Repository** বাটনে চাপ দিন।
-3. Repository name দিন: \`SANDI-Daily-Hisab\`
-4. Visibility রাখুন **Private** অথবা **Public**।
-5. **Create repository** চাপুন।
+### ধাপ ১: সম্পূর্ণ প্রজেক্ট জিপ ফাইল ডাউনলোড
+- অ্যাপের **Android APK** বাটন থেকে \`SANDI-Daily-Hisab-Android-Source.zip\` ডাউনলোড করে ফোনে আনজিপ করুন।
 
-### ধাপ ২: ফাইলসমূহ আপলোড করুন
-1. এই অ্যাপের "Download Android Project ZIP" বাটন থেকে সম্পূর্ণ জিপ ফাইলটি ডাউনলোড করে নিন।
-2. ফাইলটি আনজিপ করুন।
-3. গিটহাব রিপোজিটরিতে **Add file** -> **Upload files** চাপুন।
-4. সমস্ত ফোল্ডার ও ফাইলসমূহ ড্র্যাগ/সিলেক্ট করে কমিট করুন (\`Commit changes\`)।
+### ধাপ ২: গিটহাবে রিপোজিটরি তৈরি ও ফাইল আপলোড
+- ফোনের ব্রাউজারে [github.com](https://github.com) এ গিয়ে নতুন রিপোজিটরি (\`SANDI-Daily-Hisab\`) তৈরি করুন।
+- **Add file -> Upload files** দিয়ে আনজিপ করা সব ফাইল ও ফোল্ডার আপলোড করে কমিট দিন।
 
-### ধাপ ৩: গিটহাব অ্যাকশনস দিয়ে APK তৈরি
-1. আপনার রিপোজিটরির উপরের মেন্যু থেকে **Actions** ট্যাবে যান।
-2. বাঁপাশের তালিকা থেকে **Build SANDI Debug APK** দেখতে পাবেন।
-3. **Run workflow** বাটনে ক্লিক করুন।
-4. মাত্র ২ থেকে ৩ মিনিটের মধ্যে গিটহাবের ভার্চুয়াল ক্লাউড আপনার প্রজেক্টটি কম্পাইল করে একটি গ্রিন টিক মার্ক দেখাবে।
+### ধাপ ৩: গিটহাব অ্যাকশনস রান
+- রিপোজিটরির **Actions** ট্যাবে যান।
+- বাঁপাশের মেন্যু থেকে **Build SANDI Debug APK** ওয়ার্কফ্লোটি সিলেক্ট করে **Run workflow** বাটনে ক্লিক করুন।
+- গিটহাব ক্লাউড কোনো ত্রুটি ছাড়াই স্বয়ংক্রিয়ভাবে প্রজেক্টটি কম্পাইল করে একটি গ্রিন টিক মার্ক দেখাবে।
 
 ### ধাপ ৪: APK ডাউনলোড ও ইনস্টল
-1. সফল হওয়া রানটিতে ক্লিক করুন।
-2. পেজের নিচের অংশে **Artifacts** সেকশনে যান।
-3. **SANDI-Debug-APK** নামের জিপ ফাইলটিতে ক্লিক করলেই আপনার ফোনে আসল অ্যাপটি ডাউনলোড হয়ে যাবে।
-4. ফাইলটি ওপেন করে ইনস্টল করুন এবং সানন্দে আপনার ইজি বাইকের হিসাব পরিচালনা করুন!
-
----
-
-## ৩. প্রযুক্তি ও আর্কিটেকচার
-- **ভাষা:** Kotlin 2.1
-- **ইউজার ইন্টারফেস:** Jetpack Compose + Material 3 (Dark Navy, Obsidian Black, Gold Accents)
-- **ডাটাবেজ:** Room Database (SQLite) with Coroutines & StateFlow
-- **মডেল:** MVVM + Clean Architecture Repository Pattern
-- **বিল্ড টুল:** Gradle 8.10 (Kotlin DSL \`.kts\`) + GitHub Actions CI/CD
-- **লাইসেন্স:** Apache 2.0 (ব্যক্তিগত মালিকানাধীন)
+- কমপ্লিট হওয়া রানটিতে ক্লিক করে নিচের **Artifacts** সেকশনে যান।
+- **SANDI-Debug-APK** ফাইলটি ডাউনলোড করে আপনার ফোনে ইনস্টল করে নিন!
 `,
   },
 ];
