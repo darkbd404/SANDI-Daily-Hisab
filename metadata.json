@@ -1,0 +1,6 @@
+{
+  "name": "SANDI Daily Hisab",
+  "description": "Personal Auto Easy Bike Manager for আব্দুছ ছালাম - 100% Offline Hisab, Vouchers, Battery & Maintenance with Android project export",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
